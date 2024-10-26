@@ -1,1 +1,3 @@
-let () = print_endline "Hello, World!"
+open Final
+
+let () = Driver.main

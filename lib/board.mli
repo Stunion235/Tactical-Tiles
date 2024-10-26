@@ -19,3 +19,9 @@ val of_intarrayarray : int array array -> grid
 
 val to_intarrayarray : grid -> int array array
 (**Make an int array array from a grid*)
+
+val initialize_board : int -> int -> grid
+(**Make an empty grid from a difficulty and size*)
+
+val fill_board : grid -> unit
+(**Mutate the grid in place to its initial setup*)
