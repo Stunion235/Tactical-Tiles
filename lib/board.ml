@@ -14,3 +14,8 @@ let rec find_empty_tile_aux board i j =
 
 let rec find_empty board = find_empty_tile_aux board 0 0
 let create_tile value = if value < 0 then Empty else Number value
+
+let tile_to_string value =
+  match value with
+  | Empty -> ""
+  | Number x -> string_of_int x
