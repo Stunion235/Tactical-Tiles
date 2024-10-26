@@ -13,3 +13,4 @@ let rec find_empty_tile_aux board i j =
     | _ -> find_empty_tile_aux board i (j + 1)
 
 let rec find_empty board = find_empty_tile_aux board 0 0
+let create_tile value = if value < 0 then Empty else Number value
