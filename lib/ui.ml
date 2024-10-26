@@ -1,7 +1,5 @@
 open Board
 
-let intarrayarray_to_grid i = Array.map (Array.map create_tile) i
-
 (**For best results, g has at least one row and one column and is rectangular
    (all rows have the same number of columns)*)
 let grid_to_string g =

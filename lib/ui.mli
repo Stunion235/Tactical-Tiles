@@ -1,14 +1,6 @@
-type tile
-(**The type of one tile*)
+val grid_to_string : Board.grid -> string
+(**User-friendly string representation of a grid. Needed as a comparable value
+   for testing.*)
 
-type grid
-(**The type of a grid of tiles*)
-
-val int_to_tile : int -> tile
-(**Turn an int into a tile*)
-
-val intarrayarray_to_grid : int array array -> grid
-(**Make a grid of tiles from an int array array*)
-
-val print_grid : grid -> unit
-(**Print a user-friendly representation of a grid*)
+val print_grid : Board.grid -> unit
+(**Print [grid_to_string].*)
