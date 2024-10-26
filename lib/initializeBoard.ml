@@ -1,7 +1,7 @@
 open Board
 
 let initialize_board difficulty size =
-  Array.make size (Array.make size (create_tile (-1)))
+  Array.init size (fun _ -> Array.init size (fun _ -> create_tile (-1)))
 
 let fill_board currBoard =
   let value = ref 1 in
