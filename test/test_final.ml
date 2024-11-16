@@ -10,9 +10,9 @@ let qtests =
         "An filled board of size>1 must have one empty tile and one tile whose \
          value is size^2-1."
       ~print:QCheck.Print.(list int)
-      QCheck2.Gen.(list_size (int_range 2 2) (int_range 2 10))
+      QCheck2.Gen.(list_size (int_range 1 1) (int_range 2 10))
       (fun x ->
-        let board = Board.initialize_board (List.nth x 0) (List.nth x 1) in
+        let board = Board.initialize_board (List.nth x 0) in
         Board.fill_board board;
         let board_as_list = List.flatten (Board.to_intlistlist board) in
         (*Since QCheck's ~print prints the inputs that caused failure instead of
@@ -22,7 +22,7 @@ let qtests =
           List.length (List.filter (fun y -> y = -1) board_as_list) = 1
           && List.length
                (List.filter
-                  (fun y -> y = (List.nth x 1 * List.nth x 1) - 1)
+                  (fun y -> y = (List.nth x 0 * List.nth x 0) - 1)
                   board_as_list)
              = 1
         in
