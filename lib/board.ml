@@ -58,23 +58,24 @@ let move_tile grid direction =
       if in_bound ex (ey + 1) grid then (
         grid.(ex).(ey) <- grid.(ex).(ey + 1);
         grid.(ex).(ey + 1) <- Empty)
-      else print_endline "This is an invalid input. Please try again"
+      else print_endline "Unable to move block upwards."
   | "A" | "a" ->
       if in_bound (ex + 1) ey grid then (
         grid.(ex).(ey) <- grid.(ex + 1).(ey);
         grid.(ex + 1).(ey) <- Empty)
-      else print_endline "This is an invalid input. Please try again"
+      else print_endline "Unable to move to the left."
   | "S" | "s" ->
       if in_bound ex (ey - 1) grid then (
         grid.(ex).(ey) <- grid.(ex).(ey - 1);
         grid.(ex).(ey - 1) <- Empty)
-      else print_endline "This is an invalid input. Please try again"
+      else print_endline "Unable to move the block downwards."
   | "D" | "d" ->
       if in_bound (ex - 1) ey grid then (
         grid.(ex).(ey) <- grid.(ex - 1).(ey);
         grid.(ex - 1).(ey) <- Empty)
-      else print_endline "This is an invalid input. Please try again"
-  | _ -> print_endline "This is an invalid input. Please try again"
+      else print_endline "Unable to move the block to the right."
+  | _ -> print_endline "This is an invalid input. Please try again" 
+
 
 let to_intlistlist (g : grid) =
   to_intarrayarray g |> Array.map Array.to_list |> Array.to_list

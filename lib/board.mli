@@ -26,5 +26,5 @@ val initialize_board : int -> int -> grid
 val fill_board : grid -> unit
 (**Mutate the grid in place to its initial setup*)
 
-(* val move_tile : grid -> string -> unit *)
+val move_tile : grid -> string -> unit
 val to_intlistlist : grid -> int list list
