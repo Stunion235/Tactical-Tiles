@@ -81,3 +81,19 @@ let move_tile grid direction =
 
 let to_intlistlist (g : grid) =
   to_intarrayarray g |> Array.map Array.to_list |> Array.to_list
+
+let shuffle board difficulty =
+  let direction = [ "W"; "w"; "S"; "s"; "D"; "d"; "A"; "a" ] in
+  let difficulty = String.lowercase_ascii difficulty in
+  let rec shuffle_aux n =
+    match n with
+    | 0 -> ()
+    | _ ->
+        move_tile board (List.nth direction (Random.int 8));
+        shuffle_aux (n - 1)
+  in
+  match difficulty with
+  | "easy" -> shuffle_aux 5
+  | "medium" -> shuffle_aux 10
+  | "hard" -> shuffle_aux 15
+  | _ -> print_endline "Enter a valid difficulty"
