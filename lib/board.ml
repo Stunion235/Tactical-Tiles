@@ -49,30 +49,30 @@ let fill_board currBoard =
     create_tile (-1)
 
 let in_bound row column board =
-  row <= Array.length board && column <= Array.length board.(0)
+  column <= Array.length board && row >= 0 && row <= Array.length board.(0) && column >= 0
 
 let move_tile grid direction =
-  let ex, ey = find_empty grid in
+  let ey, ex = find_empty grid in
   match direction with
   | "W" | "w" ->
-      if in_bound ex (ey + 1) grid then (
-        grid.(ex).(ey) <- grid.(ex).(ey + 1);
-        grid.(ex).(ey + 1) <- Empty)
-      else print_endline "Unable to move block upwards."
-  | "A" | "a" ->
-      if in_bound (ex + 1) ey grid then (
+      if in_bound (ex + 1) (ey) grid then (
         grid.(ex).(ey) <- grid.(ex + 1).(ey);
         grid.(ex + 1).(ey) <- Empty)
+      else print_endline "Unable to move block upwards."
+  | "A" | "a" ->
+      if in_bound (ex) (ey + 1) grid then (
+        grid.(ex).(ey) <- grid.(ex).(ey + 1);
+        grid.(ex).(ey + 1) <- Empty)
       else print_endline "Unable to move to the left."
   | "S" | "s" ->
-      if in_bound ex (ey - 1) grid then (
-        grid.(ex).(ey) <- grid.(ex).(ey - 1);
-        grid.(ex).(ey - 1) <- Empty)
-      else print_endline "Unable to move the block downwards."
-  | "D" | "d" ->
-      if in_bound (ex - 1) ey grid then (
+      if in_bound (ex - 1) (ey) grid then (
         grid.(ex).(ey) <- grid.(ex - 1).(ey);
         grid.(ex - 1).(ey) <- Empty)
+      else print_endline "Unable to move the block downwards."
+  | "D" | "d" ->
+      if in_bound (ex) (ey - 1) grid then (
+        grid.(ex).(ey) <- grid.(ex).(ey - 1);
+        grid.(ex).(ey - 1) <- Empty)
       else print_endline "Unable to move the block to the right."
   | _ -> print_endline "This is an invalid input. Please try again" 
 
