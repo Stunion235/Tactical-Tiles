@@ -47,3 +47,11 @@ let fill_board currBoard =
   done;
   currBoard.(Array.length currBoard - 1).(Array.length currBoard - 1) <-
     create_tile (-1)
+
+(* let move_tile grid direction = let ex, ey = find_empty grid in match
+   direction with | "W" | "w" -> failwith "TODO" | "A" | "a" -> failwith "TODO"
+   | "S" | "s" -> failwith "TODO" | "D" | "d" -> failwith "TODO" | _ -> failwith
+   "Invalid input" *)
+
+let to_intlistlist (g : grid) =
+  to_intarrayarray g |> Array.map Array.to_list |> Array.to_list

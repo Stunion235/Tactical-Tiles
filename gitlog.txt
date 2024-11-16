@@ -1,0 +1,132 @@
+commit a277af707cd2a0d86c86a83fbb31ce7c3cf260a5
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Wed Oct 30 22:03:10 2024 -0400
+
+    Changed README.md to AUTHORS.md
+
+commit fecbfe17d3268167d0d11d7be0b5bac814ecadd3
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Mon Oct 28 14:56:16 2024 -0400
+
+    INSTALL, driver error handling
+
+commit c846d424cc8c329ab2213778c0210829b2d12a8e
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Oct 26 15:29:58 2024 -0400
+
+    Driver
+
+commit a8b0810af008baa726be851f231f05f9340b0a7f
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sat Oct 26 15:23:24 2024 -0400
+
+    Fixed initialize_board function
+
+commit 1818afdc3bc0f86d759a84b1f0dc72473c48ebc6
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Oct 26 14:29:56 2024 -0400
+
+    fix merge error
+
+commit 647bf6b54b966474b2907fb948268a9268d041b2
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Oct 26 13:29:19 2024 -0400
+
+    consolidate board ops
+
+commit 9fbd821b44c2f69a865979859ae08e2ef76db5c8
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sat Oct 26 13:41:42 2024 -0400
+
+    created tile_to_string function
+
+commit d52147c41064cfeae04fb0ee14454d70d56e4e20
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Oct 26 13:24:06 2024 -0400
+
+    changed initialize board
+
+commit 2bb2f8ab92917745cc40ccf59295a738957aecfd
+Merge: 2d52783 96eee43
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Oct 26 13:23:16 2024 -0400
+
+    changed initialize board
+
+commit 2d52783f5ab3743195ab38e04148f2211a82e53e
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Oct 26 13:17:52 2024 -0400
+
+    Initialized initializeBoard and created a board full of values in order
+
+commit 96eee4367e95766071312b61f4a31393bebd98f3
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Oct 26 13:00:05 2024 -0400
+
+    Started UI
+
+commit c04d42a0effaaf0965e79947822f856ad99ba835
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sat Oct 26 12:42:29 2024 -0400
+
+    Changed board.ml
+
+commit b40fd7607f44a2765b6d393cf63d84c5952ed3b5
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sat Oct 26 12:16:58 2024 -0400
+
+    Created board.ml and board.mli
+
+commit 4d7599e8ea7a8ea1b458d7b03f551eeb9d494de2
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Oct 26 12:01:28 2024 -0400
+
+    Created board.ml and board.mli
+
+commit d2434b6615b81ba59ceb7cd59fdcedab745036c1
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Oct 26 11:58:27 2024 -0400
+
+    Created initializeBoard
+
+commit 1348a01c723a54060a6fcc9d62e7dfcf34707ae2
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Oct 26 11:10:21 2024 -0400
+
+    README
+
+commit b4886d28b6c804b807ea1ae9fb2b3cbf43712656
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Oct 26 11:07:42 2024 -0400
+
+    Initial
+
+commit cfa4a5e54d79d87f8832473b11231a0f69c01d92
+Author: emb427 <emb427@cornell.edu>
+Date:   Thu Oct 10 14:12:47 2024 -0400
+
+    Update README.md
+
+commit ce8a2d9a7bb1fd127c243f449e125b8ffdea6188
+Author: at863 <18485+at863@users.noreply.github.coecis.cornell.edu>
+Date:   Fri Oct 4 18:34:05 2024 -0400
+
+    Update README.md
+
+commit f122a8ce590860c2c0be67557056abb10fcf9282
+Author: am2945 <17863+am2945@users.noreply.github.coecis.cornell.edu>
+Date:   Fri Oct 4 18:31:53 2024 -0400
+
+    Create README.md
+
+commit dfa9d4683433644d716a72961d6fff5ee2704f9a
+Author: lm685 <17008+lm685@users.noreply.github.coecis.cornell.edu>
+Date:   Fri Oct 4 18:31:44 2024 -0400
+
+    Update README.md
+
+commit 7356cd4b89420519d19d8fba2c788778d9d11f8b
+Author: at863 <18485+at863@users.noreply.github.coecis.cornell.edu>
+Date:   Fri Oct 4 18:07:35 2024 -0400
+
+    Initial commit
