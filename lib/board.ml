@@ -32,7 +32,7 @@ let to_intarrayarray (g : grid) =
          | Number n -> n))
     g
 
-let initialize_board difficulty size =
+let initialize_board size =
   Array.init size (fun _ -> Array.init size (fun _ -> create_tile (-1)))
 
 let fill_board currBoard =
@@ -49,51 +49,51 @@ let fill_board currBoard =
     create_tile (-1)
 
 let in_bound row column board =
-  column <= Array.length board
+  row < Array.length board
   && row >= 0
-  && row <= Array.length board.(0)
+  && column < Array.length board.(0)
   && column >= 0
 
 let move_tile grid direction =
-  let ex, ey = find_empty grid in
+  let ey, ex = find_empty grid in
   match direction with
   | "W" | "w" ->
-      if in_bound ex (ey + 1) grid then (
-        grid.(ex).(ey) <- grid.(ex).(ey + 1);
-        grid.(ex).(ey + 1) <- Empty)
-      else print_endline "This is an invalid input. Please try again"
+      if in_bound (ey + 1) ex grid then (
+        grid.(ey).(ex) <- grid.(ey + 1).(ex);
+        grid.(ey + 1).(ex) <- Empty)
+      else print_endline "No tile to move up into the gap."
   | "A" | "a" ->
-      if in_bound (ex + 1) ey grid then (
-        grid.(ex).(ey) <- grid.(ex + 1).(ey);
-        grid.(ex + 1).(ey) <- Empty)
-      else print_endline "This is an invalid input. Please try again"
+      if in_bound ey (ex + 1) grid then (
+        grid.(ey).(ex) <- grid.(ey).(ex + 1);
+        grid.(ey).(ex + 1) <- Empty)
+      else print_endline "No tile to move left into the gap."
   | "S" | "s" ->
-      if in_bound ex (ey - 1) grid then (
-        grid.(ex).(ey) <- grid.(ex).(ey - 1);
-        grid.(ex).(ey - 1) <- Empty)
-      else print_endline "This is an invalid input. Please try again"
+      if in_bound (ey - 1) ex grid then (
+        grid.(ey).(ex) <- grid.(ey - 1).(ex);
+        grid.(ey - 1).(ex) <- Empty)
+      else print_endline "No tile to move down into the gap."
   | "D" | "d" ->
-      if in_bound (ex - 1) ey grid then (
-        grid.(ex).(ey) <- grid.(ex - 1).(ey);
-        grid.(ex - 1).(ey) <- Empty)
-      else print_endline "This is an invalid input. Please try again"
-  | _ -> print_endline "This is an invalid input. Please try again"
+      if in_bound ey (ex - 1) grid then (
+        grid.(ey).(ex) <- grid.(ey).(ex - 1);
+        grid.(ey).(ex - 1) <- Empty)
+      else print_endline "No tile to move right into the gap."
+  | _ -> print_endline "This is an invalid input. Type w, a, s, or d."
 
 let to_intlistlist (g : grid) =
   to_intarrayarray g |> Array.map Array.to_list |> Array.to_list
 
 let shuffle board difficulty =
-  let direction = [ "W"; "w"; "S"; "s"; "D"; "d"; "A"; "a" ] in
+  let direction = [ "W"; "A"; "S"; "D" ] in
   let difficulty = String.lowercase_ascii difficulty in
   let rec shuffle_aux n =
     match n with
     | 0 -> ()
     | _ ->
-        move_tile board (List.nth direction (Random.int 8));
+        move_tile board (List.nth direction (Random.int 4));
         shuffle_aux (n - 1)
   in
   match difficulty with
-  | "easy" -> shuffle_aux 5
-  | "medium" -> shuffle_aux 10
-  | "hard" -> shuffle_aux 15
+  | "easy" -> shuffle_aux (Array.length board * Array.length board)
+  | "medium" -> shuffle_aux (Array.length board * Array.length board * 4)
+  | "hard" -> shuffle_aux (Array.length board * Array.length board * 8)
   | _ -> print_endline "Enter a valid difficulty"

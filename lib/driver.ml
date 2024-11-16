@@ -6,13 +6,24 @@ let rec ask_size () =
   with Failure _ -> ask_size ()
 
 let rec ask_difficulty () =
-  print_endline "What difficulty would you like? Give a positive integer.";
-  try
-    let x = int_of_string (input_line stdin) in
-    if x > 0 then x else ask_difficulty ()
-  with Failure _ -> ask_difficulty ()
+  print_endline "What difficulty would you like? Easy, medium, or hard.";
+  let x = input_line stdin in
+  if
+    String.uppercase_ascii x = "EASY"
+    || String.uppercase_ascii x = "MEDIUM"
+    || String.uppercase_ascii x = "HARD"
+  then x
+  else ask_difficulty ()
 
 let main =
-  let board = Board.initialize_board (ask_difficulty ()) (ask_size ()) in
+  Random.self_init ();
+  let board = Board.initialize_board (ask_size ()) in
   Board.fill_board board;
-  Ui.print_grid board
+  Board.shuffle board (ask_difficulty ());
+  Ui.print_grid board;
+  while true do
+    let m = input_line stdin in
+    Board.move_tile board m;
+    if List.mem (String.lowercase_ascii m) [ "w"; "a"; "s"; "d" ] then
+      Ui.print_grid board
+  done
