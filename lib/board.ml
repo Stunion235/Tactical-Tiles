@@ -51,10 +51,30 @@ let fill_board currBoard =
 let in_bound row column board =
   row <= Array.length board && column <= Array.length board.(0)
 
-(* let move_tile grid direction = let ex, ey = find_empty grid in match
-   direction with | "W" | "w" -> failwith "TODO" | "A" | "a" -> failwith "TODO"
-   | "S" | "s" -> failwith "TODO" | "D" | "d" -> failwith "TODO" | _ -> failwith
-   "Invalid input" *)
+let move_tile grid direction =
+  let ex, ey = find_empty grid in
+  match direction with
+  | "W" | "w" ->
+      if in_bound ex (ey + 1) grid then (
+        grid.(ex).(ey) <- grid.(ex).(ey + 1);
+        grid.(ex).(ey + 1) <- Empty)
+      else print_endline "This is an invalid input. Please try again"
+  | "A" | "a" ->
+      if in_bound (ex + 1) ey grid then (
+        grid.(ex).(ey) <- grid.(ex + 1).(ey);
+        grid.(ex + 1).(ey) <- Empty)
+      else print_endline "This is an invalid input. Please try again"
+  | "S" | "s" ->
+      if in_bound ex (ey - 1) grid then (
+        grid.(ex).(ey) <- grid.(ex).(ey - 1);
+        grid.(ex).(ey - 1) <- Empty)
+      else print_endline "This is an invalid input. Please try again"
+  | "D" | "d" ->
+      if in_bound (ex - 1) ey grid then (
+        grid.(ex).(ey) <- grid.(ex - 1).(ey);
+        grid.(ex - 1).(ey) <- Empty)
+      else print_endline "This is an invalid input. Please try again"
+  | _ -> print_endline "This is an invalid input. Please try again"
 
 let to_intlistlist (g : grid) =
   to_intarrayarray g |> Array.map Array.to_list |> Array.to_list
