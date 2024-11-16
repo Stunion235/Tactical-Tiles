@@ -50,3 +50,10 @@ let fill_board currBoard =
 
 let in_bound row column board =
   row <= Array.length board && column <= Array.length board.(0)
+(* let move_tile grid direction = let ex, ey = find_empty grid in match
+   direction with | "W" | "w" -> failwith "TODO" | "A" | "a" -> failwith "TODO"
+   | "S" | "s" -> failwith "TODO" | "D" | "d" -> failwith "TODO" | _ -> failwith
+   "Invalid input" *)
+
+let to_intlistlist (g : grid) =
+  to_intarrayarray g |> Array.map Array.to_list |> Array.to_list
