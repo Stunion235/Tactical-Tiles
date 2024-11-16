@@ -47,3 +47,6 @@ let fill_board currBoard =
   done;
   currBoard.(Array.length currBoard - 1).(Array.length currBoard - 1) <-
     create_tile (-1)
+
+let in_bound row column board =
+  row <= Array.length board && column <= Array.length board.(0)
