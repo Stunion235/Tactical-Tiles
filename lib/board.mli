@@ -29,3 +29,4 @@ val fill_board : grid -> unit
 val move_tile : grid -> string -> unit
 val to_intlistlist : grid -> int list list
 val shuffle : grid -> string -> unit
+val check_correct_board : grid -> bool

@@ -97,3 +97,19 @@ let shuffle board difficulty =
   | "medium" -> shuffle_aux (Array.length board * Array.length board * 4)
   | "hard" -> shuffle_aux (Array.length board * Array.length board * 8)
   | _ -> print_endline "Enter a valid difficulty"
+
+let check_correct_board board =
+  let size = Array.length board in
+  let acc = ref 1 in
+  try
+    Array.iteri
+      (fun i row ->
+        Array.iteri
+          (fun j tile ->
+            match tile with
+            | Empty -> if (i, j) <> (size - 1, size - 1) then raise Exit
+            | Number n -> if n <> !acc then raise Exit else acc := !acc + 1)
+          row)
+      board;
+    true
+  with Exit -> false

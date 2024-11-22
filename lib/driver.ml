@@ -28,5 +28,8 @@ let main =
     else (
       Board.move_tile board m;
       if List.mem (String.lowercase_ascii m) [ "w"; "a"; "s"; "d" ] then
-        Ui.print_grid board)
+        Ui.print_grid board;
+      if Board.check_correct_board board then (
+        print_endline "Success!";
+        exit 0))
   done
