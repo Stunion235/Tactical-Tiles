@@ -7,8 +7,8 @@ let qtests =
   [
     QCheck2.Test.make ~count:50
       ~name:
-        "An filled board of size>1 must have one empty tile and one tile whose \
-         value is size^2-1."
+        "An filled board of size>1 must have exactly one empty tile and \
+         exactly one tile whose value is size^2-1."
       ~print:QCheck.Print.(list int)
       QCheck2.Gen.(list_size (int_range 1 1) (int_range 2 10))
       (fun x ->
@@ -25,6 +25,30 @@ let qtests =
                   (fun y -> y = (List.nth x 0 * List.nth x 0) - 1)
                   board_as_list)
              = 1
+        in
+        if not passed then (
+          Ui.print_grid board;
+          List.iter print_int board_as_list);
+        passed);
+    QCheck2.Test.make ~count:50
+      ~name:
+        "Aside from the empty tile, a filled board of size>1 must have tiles \
+         ranging from 1 to size^2-1."
+      ~print:QCheck.Print.(list int)
+      QCheck2.Gen.(list_size (int_range 1 1) (int_range 2 10))
+      (fun x ->
+        let board = Board.initialize_board (List.nth x 0) in
+        Board.fill_board board;
+        let board_as_list = List.flatten (Board.to_intlistlist board) in
+        let passed =
+          try
+            for i = 1 to List.nth x 0 do
+              if not (List.exists (fun y -> y = i) board_as_list) then
+                (*Use exception to break loop*)
+                failwith "number not found"
+            done;
+            true
+          with Failure _ -> false
         in
         if not passed then (
           Ui.print_grid board;
