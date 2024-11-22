@@ -20,10 +20,13 @@ let main =
   let board = Board.initialize_board (ask_size ()) in
   Board.fill_board board;
   Board.shuffle board (ask_difficulty ());
+  print_endline "To stop the game in the middle, please input 'stop'";
   Ui.print_grid board;
   while true do
     let m = input_line stdin in
-    Board.move_tile board m;
-    if List.mem (String.lowercase_ascii m) [ "w"; "a"; "s"; "d" ] then
-      Ui.print_grid board
+    if String.uppercase_ascii m = "STOP" then exit 0
+    else (
+      Board.move_tile board m;
+      if List.mem (String.lowercase_ascii m) [ "w"; "a"; "s"; "d" ] then
+        Ui.print_grid board)
   done

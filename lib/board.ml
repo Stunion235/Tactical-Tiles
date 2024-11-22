@@ -61,22 +61,22 @@ let move_tile grid direction =
       if in_bound (ey + 1) ex grid then (
         grid.(ey).(ex) <- grid.(ey + 1).(ex);
         grid.(ey + 1).(ex) <- Empty)
-      else print_endline "No tile to move up into the gap."
+      else ()
   | "A" | "a" ->
       if in_bound ey (ex + 1) grid then (
         grid.(ey).(ex) <- grid.(ey).(ex + 1);
         grid.(ey).(ex + 1) <- Empty)
-      else print_endline "No tile to move left into the gap."
+      else ()
   | "S" | "s" ->
       if in_bound (ey - 1) ex grid then (
         grid.(ey).(ex) <- grid.(ey - 1).(ex);
         grid.(ey - 1).(ex) <- Empty)
-      else print_endline "No tile to move down into the gap."
+      else ()
   | "D" | "d" ->
       if in_bound ey (ex - 1) grid then (
         grid.(ey).(ex) <- grid.(ey).(ex - 1);
         grid.(ey).(ex - 1) <- Empty)
-      else print_endline "No tile to move right into the gap."
+      else ()
   | _ -> print_endline "This is an invalid input. Type w, a, s, or d."
 
 let to_intlistlist (g : grid) =
