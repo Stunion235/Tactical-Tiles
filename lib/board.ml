@@ -61,7 +61,6 @@ let move_tile grid direction =
       if in_bound (ey + 1) ex grid then (
         grid.(ey).(ex) <- grid.(ey + 1).(ex);
         grid.(ey + 1).(ex) <- Empty)
-      else ()
   | "A" | "a" ->
       if in_bound ey (ex + 1) grid then (
         grid.(ey).(ex) <- grid.(ey).(ex + 1);
@@ -84,19 +83,55 @@ let to_intlistlist (g : grid) =
 
 let shuffle board difficulty =
   let direction = [ "W"; "A"; "S"; "D" ] in
+  let opposite_move = function
+    | "W" -> "S"
+    | "S" -> "W"
+    | "A" -> "D"
+    | "D" -> "A"
+    | _ -> failwith "Invalid move"
+  in
   let difficulty = String.lowercase_ascii difficulty in
-  let rec shuffle_aux n =
+  let shuffle_moves = Stack.create () in
+  let is_move_valid board move =
+    let ey, ex = find_empty board in
+    match move with
+    | "W" | "w" -> in_bound (ey + 1) ex board
+    | "A" | "a" -> in_bound ey (ex + 1) board
+    | "S" | "s" -> in_bound (ey - 1) ex board
+    | "D" | "d" -> in_bound ey (ex - 1) board
+    | _ -> false
+  in
+  let rec shuffle_aux n last_move =
     match n with
     | 0 -> ()
     | _ ->
-        move_tile board (List.nth direction (Random.int 4));
-        shuffle_aux (n - 1)
+        let rec get_next_move () =
+          let move = List.nth direction (Random.int 4) in
+          if
+            last_move = ""
+            || (move <> opposite_move last_move && is_move_valid board move)
+          then move
+          else get_next_move ()
+        in
+        let move = get_next_move () in
+
+        move_tile board move;
+        Stack.push move shuffle_moves;
+        shuffle_aux (n - 1) move
   in
   match difficulty with
-  | "easy" -> shuffle_aux (Array.length board * Array.length board)
-  | "medium" -> shuffle_aux (Array.length board * Array.length board * 4)
-  | "hard" -> shuffle_aux (Array.length board * Array.length board * 8)
-  | _ -> print_endline "Enter a valid difficulty"
+  | "easy" ->
+      shuffle_aux (Array.length board * Array.length board) "";
+      shuffle_moves
+  | "medium" ->
+      shuffle_aux (Array.length board * Array.length board * 4) "";
+      shuffle_moves
+  | "hard" ->
+      shuffle_aux (Array.length board * Array.length board * 8) "";
+      shuffle_moves
+  | _ ->
+      print_endline "Enter a valid difficulty";
+      shuffle_moves
 
 let check_correct_board board =
   let size = Array.length board in

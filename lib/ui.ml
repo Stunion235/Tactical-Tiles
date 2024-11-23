@@ -38,3 +38,19 @@ let grid_to_string g =
   !acc
 
 let print_grid g = print_endline (grid_to_string g)
+
+let simulate_solution board shuffle_moves =
+  while not (Stack.is_empty shuffle_moves) do
+    let move = Stack.pop shuffle_moves in
+    let inverse_move =
+      match move with
+      | "w" | "W" -> "s"
+      | "a" | "A" -> "d"
+      | "s" | "S" -> "w"
+      | "d" | "D" -> "a"
+      | _ -> failwith "Invalid move"
+    in
+    move_tile board inverse_move;
+    print_grid board;
+    Unix.sleepf 1.0
+  done
