@@ -54,25 +54,35 @@ let in_bound row column board =
   && column < Array.length board.(0)
   && column >= 0
 
+let is_move_valid board move =
+  let ey, ex = find_empty board in
+  match move with
+  | "W" | "w" -> in_bound (ey + 1) ex board
+  | "A" | "a" -> in_bound ey (ex + 1) board
+  | "S" | "s" -> in_bound (ey - 1) ex board
+  | "D" | "d" -> in_bound ey (ex - 1) board
+  | _ -> false
+
 let move_tile grid direction =
   let ey, ex = find_empty grid in
   match direction with
   | "W" | "w" ->
-      if in_bound (ey + 1) ex grid then (
+      if is_move_valid grid direction then (
         grid.(ey).(ex) <- grid.(ey + 1).(ex);
         grid.(ey + 1).(ex) <- Empty)
+      else ()
   | "A" | "a" ->
-      if in_bound ey (ex + 1) grid then (
+      if is_move_valid grid direction then (
         grid.(ey).(ex) <- grid.(ey).(ex + 1);
         grid.(ey).(ex + 1) <- Empty)
       else ()
   | "S" | "s" ->
-      if in_bound (ey - 1) ex grid then (
+      if is_move_valid grid direction then (
         grid.(ey).(ex) <- grid.(ey - 1).(ex);
         grid.(ey - 1).(ex) <- Empty)
       else ()
   | "D" | "d" ->
-      if in_bound ey (ex - 1) grid then (
+      if is_move_valid grid direction then (
         grid.(ey).(ex) <- grid.(ey).(ex - 1);
         grid.(ey).(ex - 1) <- Empty)
       else ()
@@ -88,19 +98,12 @@ let shuffle board difficulty =
     | "S" -> "W"
     | "A" -> "D"
     | "D" -> "A"
+    | "" -> ""
     | _ -> failwith "Invalid move"
   in
   let difficulty = String.lowercase_ascii difficulty in
   let shuffle_moves = Stack.create () in
-  let is_move_valid board move =
-    let ey, ex = find_empty board in
-    match move with
-    | "W" | "w" -> in_bound (ey + 1) ex board
-    | "A" | "a" -> in_bound ey (ex + 1) board
-    | "S" | "s" -> in_bound (ey - 1) ex board
-    | "D" | "d" -> in_bound ey (ex - 1) board
-    | _ -> false
-  in
+
   let rec shuffle_aux n last_move =
     match n with
     | 0 -> ()
@@ -108,7 +111,7 @@ let shuffle board difficulty =
         let rec get_next_move () =
           let move = List.nth direction (Random.int 4) in
           if
-            last_move = ""
+            (last_move = "" && is_move_valid board move)
             || (move <> opposite_move last_move && is_move_valid board move)
           then move
           else get_next_move ()
