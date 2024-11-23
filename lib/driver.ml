@@ -1,8 +1,8 @@
 let rec ask_size () =
-  print_endline "What board size would you like? Give a positive integer.";
+  print_endline "What board size would you like? Give an integer >1.";
   try
     let x = int_of_string (input_line stdin) in
-    if x > 0 then x else ask_size ()
+    if x > 1 then x else ask_size ()
   with Failure _ -> ask_size ()
 
 let rec ask_difficulty () =
