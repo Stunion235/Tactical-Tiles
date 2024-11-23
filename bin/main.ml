@@ -1,3 +1,22 @@
 open Final
 
-let () = Driver.main
+let rec ask_mode () =
+  print_endline
+    "What game mode do you want to play? Type the corresponding number.\n\
+     1. Normal, without measuring your time\n\
+     2. Measure the time you take\n\
+     3. Race the clock";
+  try
+    let x = int_of_string (input_line stdin) in
+    if x > 0 && x < 4 then x else ask_mode ()
+  with Failure _ -> ask_mode ()
+
+let () =
+  print_endline
+    "Welcome to the Humpback Hackers' Tactical Tiles!\n\
+     ________________________________________________\n";
+  Unix.sleepf 1.5;
+  print_endline "Press enter to continue.";
+  ignore (input_char stdin);
+  let mode = ask_mode () in
+  Driver.main mode
