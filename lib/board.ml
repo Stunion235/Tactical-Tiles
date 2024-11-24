@@ -103,7 +103,6 @@ let shuffle board difficulty =
   in
   let difficulty = String.lowercase_ascii difficulty in
   let shuffle_moves = Stack.create () in
-
   let rec shuffle_aux n last_move =
     match n with
     | 0 -> ()
@@ -151,3 +150,6 @@ let check_correct_board board =
       board;
     true
   with Exit -> false
+
+let copy_board (board : grid) : grid =
+  Array.map (fun row -> Array.map (fun tile -> tile) row) board

@@ -49,6 +49,13 @@ let main mode =
   let board = Board.initialize_board (ask_size ()) in
   Board.fill_board board;
   let moves = Board.shuffle board (ask_difficulty ()) in
+  let copy_stack (original : string Stack.t) : string Stack.t =
+    let copy = Stack.create () in
+    Stack.iter (fun elem -> Stack.push elem copy) original;
+    copy
+  in
+  let moves_copy = copy_stack moves in
+  let init_board = Board.copy_board board in
   print_endline "\n\n\n";
   print_help ();
   let unsolved = ref true in
@@ -65,8 +72,17 @@ let main mode =
     else if String.uppercase_ascii m = "HELP" then (
       print_help ();
       Ui.print_grid board)
-    else if String.uppercase_ascii m = "SIMULATE" then
-      Ui.simulate_solution board moves
+    else if String.uppercase_ascii m = "SIMULATE" then (
+      let board_copy = Board.copy_board init_board in
+      let copy_moves = copy_stack moves_copy in
+      Unix.sleepf 1.0;
+      print_endline "Simulating solution...";
+      Unix.sleepf 2.0;
+      Ui.simulate_solution board_copy copy_moves;
+      Unix.sleepf 1.0;
+      print_endline "Simulation complete. Returning to game...";
+      Unix.sleepf 2.0;
+      Ui.print_grid board)
     else (
       Board.move_tile board m;
       if List.mem (String.lowercase_ascii m) [ "w"; "a"; "s"; "d" ] then

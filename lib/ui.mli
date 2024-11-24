@@ -6,3 +6,4 @@ val print_grid : Board.grid -> unit
 (**Print [grid_to_string].*)
 
 val simulate_solution : Board.grid -> string Stack.t -> unit
+(**Simulate the sliding puzzle being solved.*)
