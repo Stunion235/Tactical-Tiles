@@ -26,21 +26,22 @@ val initialize_board : int -> grid
 val fill_board : grid -> unit
 (**Mutate the grid in place to its initial setup*)
 
-val move_tile : grid -> string -> unit
-(**Move a tile in the direction corresponding to the direction keys 'w', 'a',
-   's', and 'd'*)
-
 val is_move_valid : grid -> string -> bool
-(**Checks whether a move is valid*)
+(***Return whether or not it is valid to make a given move on a given board*)
+
+val move_tile : grid -> string -> unit
+(**Mutate a board in place to represent moving a tile. Does nothing if the move
+   is invalid.*)
 
 val to_intlistlist : grid -> int list list
-(**Make an int list list from a grid*)
+(**Int list list representation of a board for tests.*)
 
 val shuffle : grid -> string -> string Stack.t
-(**Randomly shuffle the tiles in the grid based on the difficulty provided*)
+(**Mutate a board in place to shuffle its tiles. Return a stack containing a
+   list of random moves made.*)
 
 val check_correct_board : grid -> bool
-(**Check whether the board is solved*)
+(*Return whether or not the board is solved*)
 
 val copy_board : grid -> grid
-(**Make a copy of the board*)
+(**Return a copy of a board*)

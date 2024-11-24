@@ -1,7 +1,34 @@
 open OUnit2
 open Final
 
-let tests = []
+(**Version of [simulate_solution] without print/sleep. Testing only.*)
+let solve board shuffle_moves =
+  while not (Stack.is_empty shuffle_moves) do
+    let move = Stack.pop shuffle_moves in
+    let inverse_move =
+      match move with
+      | "w" | "W" -> "s"
+      | "a" | "A" -> "d"
+      | "s" | "S" -> "w"
+      | "d" | "D" -> "a"
+      | _ -> failwith "Invalid move"
+    in
+    Board.move_tile board inverse_move
+  done
+
+let tests =
+  [
+    ( "Correctly detect invalid moves" >:: fun _ ->
+      let board = Board.initialize_board 3 in
+      Board.fill_board board;
+      assert_equal false
+        (Board.is_move_valid board "w" || Board.is_move_valid board "a") );
+    ( "Correctly detect valid moves" >:: fun _ ->
+      let board = Board.initialize_board 3 in
+      Board.fill_board board;
+      assert_equal true
+        (Board.is_move_valid board "s" && Board.is_move_valid board "d") );
+  ]
 
 let qtests =
   [
@@ -53,6 +80,72 @@ let qtests =
         if not passed then (
           Ui.print_grid board;
           List.iter print_int board_as_list);
+        passed);
+    QCheck2.Test.make ~count:20
+      ~name:
+        "Solving a board puts it in its initial state. Crucial to test a bug we\n\
+        \        had with solving."
+      ~print:QCheck.Print.(list int)
+      QCheck2.Gen.(list_size (int_range 1 1) (int_range 2 5))
+      (fun x ->
+        let board = Board.initialize_board (List.nth x 0) in
+        Board.fill_board board;
+        let initial = Board.to_intlistlist board in
+        let shuffle_moves = Board.shuffle board "easy" in
+        solve board shuffle_moves;
+        let final = Board.to_intlistlist board in
+        let passed = initial = final in
+        if not passed then Ui.print_grid board;
+        passed);
+    QCheck2.Test.make ~count:8
+      ~name:
+        "An unfilled board is NOT reported as solved by [check_correct_board]."
+      ~print:QCheck.Print.(list int)
+      QCheck2.Gen.(list_size (int_range 1 1) (int_range 2 9))
+      (fun x ->
+        let board = Board.initialize_board (List.nth x 0) in
+        let passed = not (Board.check_correct_board board) in
+        if not passed then Ui.print_grid board;
+        passed);
+    QCheck2.Test.make ~count:8
+      ~name:
+        "A filled board is reported as solved by [check_correct_board] before\n\
+        \        any moves are made."
+      ~print:QCheck.Print.(list int)
+      QCheck2.Gen.(list_size (int_range 1 1) (int_range 2 9))
+      (fun x ->
+        let board = Board.initialize_board (List.nth x 0) in
+        Board.fill_board board;
+        let passed = Board.check_correct_board board in
+        if not passed then Ui.print_grid board;
+        passed);
+    QCheck2.Test.make ~count:8
+      ~name:
+        "An invalid move on a new board does not change it from its initial\n\
+        \        state."
+      ~print:QCheck.Print.(list int)
+      QCheck2.Gen.(list_size (int_range 1 1) (int_range 2 9))
+      (fun x ->
+        let board = Board.initialize_board (List.nth x 0) in
+        Board.fill_board board;
+        let initial = Board.to_intlistlist board in
+        Board.move_tile board "w" (*1st move W is never valid*);
+        let final = Board.to_intlistlist board in
+        let passed = initial = final in
+        if not passed then Ui.print_grid board;
+        passed);
+    QCheck2.Test.make ~count:8
+      ~name:"A valid move on a new board takes it out of its initial state."
+      ~print:QCheck.Print.(list int)
+      QCheck2.Gen.(list_size (int_range 1 1) (int_range 2 9))
+      (fun x ->
+        let board = Board.initialize_board (List.nth x 0) in
+        Board.fill_board board;
+        let initial = Board.to_intlistlist board in
+        Board.move_tile board "s" (*1st move S is always valid*);
+        let final = Board.to_intlistlist board in
+        let passed = initial <> final in
+        if not passed then Ui.print_grid board;
         passed);
   ]
 

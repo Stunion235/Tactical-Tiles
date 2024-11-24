@@ -2,7 +2,8 @@ open Final
 
 let rec ask_mode () =
   print_endline
-    "What game mode do you want to play? Type the corresponding number.\n\
+    "_\n\
+     What game mode do you want to play? Type the corresponding number.\n\
      1. Normal, without measuring your time\n\
      2. Measure the time you take\n\
      3. Race the clock";
@@ -12,11 +13,13 @@ let rec ask_mode () =
   with Failure _ -> ask_mode ()
 
 let () =
-  print_endline
-    "Welcome to the Humpback Hackers' Tactical Tiles!\n\
-     ________________________________________________\n";
-  Unix.sleepf 1.5;
-  print_endline "Press enter to continue.";
-  ignore (input_char stdin);
+  if not (Array.exists (fun x -> x = "skip") Sys.argv) then (
+    print_endline
+      "\n\
+       Welcome to the Humpback Hackers' Tactical Tiles!\n\
+       ________________________________________________\n";
+    Unix.sleepf 1.5;
+    print_endline "Press enter to continue.";
+    ignore (input_char stdin));
   let mode = ask_mode () in
   Driver.main mode
