@@ -1,5 +1,5 @@
 let rec ask_size () =
-  print_endline "What board size would you like? Give a positive integer >1.";
+  print_endline "What board size would you like? Give an integer >1.";
   try
     let x = int_of_string (input_line stdin) in
     if x > 1 then x else ask_size ()
@@ -23,7 +23,10 @@ let rec ask_time () =
     if x > 0 then x else ask_time ()
   with Failure _ -> ask_time ()
 
-let format_time s = string_of_int (s / 60) ^ ":" ^ string_of_int (s mod 60)
+let format_time s =
+  let mins = string_of_int (s / 60) in
+  let secs = string_of_int (s mod 60) in
+  if s mod 60 > 9 then mins ^ ":" ^ secs else mins ^ ":0" ^ secs
 
 let print_help () =
   print_endline "Instructions:";

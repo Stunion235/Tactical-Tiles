@@ -26,7 +26,19 @@ val initialize_board : int -> grid
 val fill_board : grid -> unit
 (**Mutate the grid in place to its initial setup*)
 
+val is_move_valid : grid -> string -> bool
+(***Return whether or not it is valid to make a given move on a given board*)
+
 val move_tile : grid -> string -> unit
+(**Mutate a board in place to represent moving a tile. Does nothing if the move
+   is invalid.*)
+
 val to_intlistlist : grid -> int list list
+(**Int list list representation of a board for tests.*)
+
 val shuffle : grid -> string -> string Stack.t
+(**Mutate a board in place to shuffle its tiles. Return a stack containing a
+   list of random moves made.*)
+
 val check_correct_board : grid -> bool
+(*Return whether or not the board is solved*)
