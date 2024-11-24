@@ -52,8 +52,9 @@ let main mode =
   let board = Board.initialize_board (ask_size ()) in
   Board.fill_board board;
   let moves = Board.shuffle board (ask_difficulty ()) in
-  print_endline "\n\n\n";
-  print_help ();
+  if not (Array.exists (fun x -> x = "skip") Sys.argv) then (
+    print_endline "\n\n\n";
+    print_help ());
   let unsolved = ref true in
   let time_limit = if mode = 3 then ask_time () else 0 in
   let start_time =
