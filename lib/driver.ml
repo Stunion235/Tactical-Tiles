@@ -42,6 +42,8 @@ let print_help () =
   Unix.sleepf 0.5;
   print_endline "-To see this help later, type 'help'.";
   Unix.sleepf 0.5;
+  print_endline "-To see a simulation of the solution, type 'simulate'.";
+  Unix.sleepf 0.5;
   print_endline "-To quit, type 'stop'.\n";
   Unix.sleep 1;
   print_endline "Press enter to continue.";
