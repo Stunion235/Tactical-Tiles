@@ -39,7 +39,7 @@ let grid_to_string g =
 
 let print_grid g = print_endline (grid_to_string g)
 
-let simulate_solution board shuffle_moves =
+let simulate_solution ?(delay = 1.0) ?(debug = false) board shuffle_moves =
   while not (Stack.is_empty shuffle_moves) do
     let move = Stack.pop shuffle_moves in
     let inverse_move =
@@ -51,6 +51,6 @@ let simulate_solution board shuffle_moves =
       | _ -> failwith "Invalid move"
     in
     move_tile board inverse_move;
-    print_grid board;
-    Unix.sleepf 1.0
+    if not debug then print_grid board;
+    if delay > 0.0 then Unix.sleepf delay
   done

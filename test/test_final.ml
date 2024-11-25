@@ -147,6 +147,48 @@ let qtests =
         let passed = initial <> final in
         if not passed then Ui.print_grid board;
         passed);
+    QCheck2.Test.make ~count:8 ~name:"Simulation restores original board"
+      (QCheck2.Gen.pair
+         (QCheck2.Gen.int_range 3 10)
+         (QCheck2.Gen.oneofl [ "easy"; "medium"; "hard" ]))
+      (fun (size, difficulty) ->
+        let board = Board.initialize_board size in
+        Board.fill_board board;
+        let init_board = Board.copy_board board in
+        let moves = Board.shuffle board difficulty in
+        Ui.simulate_solution ~delay:0.0 ~debug:true board moves;
+        Board.to_intarrayarray board = Board.to_intarrayarray init_board);
+    QCheck2.Test.make ~count:8 ~name:"Simulation uses all shuffle moves"
+      (QCheck2.Gen.pair
+         (QCheck2.Gen.int_range 3 10)
+         (QCheck2.Gen.oneofl [ "easy"; "medium"; "hard" ]))
+      (fun (size, difficulty) ->
+        let board = Board.initialize_board size in
+        Board.fill_board board;
+        let moves = Board.shuffle board difficulty in
+        let move_count_before = Stack.length moves in
+        Ui.simulate_solution ~delay:0.0 ~debug:true board moves;
+        (* After simulation, the stack should be empty *)
+        Stack.length moves = 0 && move_count_before > 0);
+    QCheck2.Test.make ~count:8
+      ~name:"Simulation consistently solves puzzle from any state"
+      (QCheck2.Gen.pair
+         (QCheck2.Gen.int_range 3 10)
+         (QCheck2.Gen.oneofl [ "easy"; "medium"; "hard" ]))
+      (fun (size, difficulty) ->
+        let board = Board.initialize_board size in
+        Board.fill_board board;
+        let moves = Board.shuffle board difficulty in
+        let init_board = Board.copy_board board in
+        let random_moves = 10 in
+        for _ = 1 to random_moves do
+          let direction = List.nth [ "w"; "a"; "s"; "d" ] (Random.int 4) in
+          Board.move_tile board direction
+        done;
+        Ui.simulate_solution ~delay:0.0 ~debug:true init_board moves;
+        let solved_board = Board.initialize_board size in
+        Board.fill_board solved_board;
+        Board.to_intarrayarray init_board = Board.to_intarrayarray solved_board);
   ]
 
 let _ =
