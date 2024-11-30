@@ -69,7 +69,7 @@ let main mode =
   let start_time =
     if mode = 2 || mode = 3 then (*Start stopwatch*) Unix.time () else 0.
   in
-  Ui.print_grid board;
+  if mode = 4 then Ui.print_grid_styled board else Ui.print_grid board;
   while !unsolved do
     let m = input_line stdin in
     if String.uppercase_ascii m = "STOP" then (
@@ -77,7 +77,7 @@ let main mode =
       exit 0)
     else if String.uppercase_ascii m = "HELP" then (
       print_help ();
-      Ui.print_grid board)
+      if mode = 4 then Ui.print_grid_styled board else Ui.print_grid board)
     else if String.uppercase_ascii m = "SIMULATE" then (
       let board_copy = Board.copy_board init_board in
       let copy_moves = copy_stack moves_copy in
@@ -88,11 +88,11 @@ let main mode =
       Unix.sleepf 1.0;
       print_endline "Simulation complete. Returning to game...";
       Unix.sleepf 2.0;
-      Ui.print_grid board)
+      if mode = 4 then Ui.print_grid_styled board else Ui.print_grid board)
     else (
       Board.move_tile board m;
       if List.mem (String.lowercase_ascii m) [ "w"; "a"; "s"; "d" ] then
-        Ui.print_grid board;
+        if mode = 4 then Ui.print_grid_styled board else Ui.print_grid board;
       if mode = 2 then
         print_endline
           ("Current time: "

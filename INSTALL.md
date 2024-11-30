@@ -1,1 +1,1 @@
-No packages needed. The program is runnable as submitted.
+The package ANSITerminal is needed for Color Mode. It can be installed with `opam install ANSITerminal` and uninstalled with `opam uninstall ANSITerminal`.
