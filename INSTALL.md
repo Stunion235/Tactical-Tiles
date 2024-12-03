@@ -1,1 +1,1 @@
-The package ANSITerminal is needed for Color Mode. It can be installed with `opam install ANSITerminal` and uninstalled with `opam uninstall ANSITerminal`.
+The package ANSITerminal is needed. It can be installed with `opam install ANSITerminal` and uninstalled with `opam uninstall ANSITerminal`.

@@ -42,13 +42,14 @@ let print_grid g = print_endline (grid_to_string g)
 (**Return the correct style to use given a tile number and the grid size it
    belongs to.*)
 let ansi_style_from_tile_and_size t s =
-  if t <= s || t mod s = 1 then ANSITerminal.red
-  else if t <= s * 2 || t mod s = 2 then ANSITerminal.yellow
-  else if t <= s * 3 || t mod s = 3 then ANSITerminal.green
-  else if t <= s * 4 || t mod s = 4 then ANSITerminal.cyan
-  else if t <= s * 5 || t mod s = 5 then ANSITerminal.blue
-  else if t <= s * 6 || t mod s = 6 then ANSITerminal.magenta
-  else ANSITerminal.white
+  ANSITerminal.(
+    if t <= s || t mod s = 1 then red
+    else if t <= s * 2 || t mod s = 2 then yellow
+    else if t <= s * 3 || t mod s = 3 then green
+    else if t <= s * 4 || t mod s = 4 then cyan
+    else if t <= s * 5 || t mod s = 5 then blue
+    else if t <= s * 6 || t mod s = 6 then magenta
+    else white)
 
 let print_grid_styled g =
   let ints = Board.to_intarrayarray g in
@@ -76,15 +77,24 @@ let print_grid_styled g =
                (" " ^ s ^ " ")
          | 2 ->
              ANSITerminal.print_string
-               [ ansi_style_from_tile_and_size ints.(r).(c) h ]
+               [
+                 ansi_style_from_tile_and_size ints.(r).(c) h;
+                 ANSITerminal.on_default;
+               ]
                (" " ^ s)
          | 3 ->
              ANSITerminal.print_string
-               [ ansi_style_from_tile_and_size ints.(r).(c) h ]
+               [
+                 ansi_style_from_tile_and_size ints.(r).(c) h;
+                 ANSITerminal.on_default;
+               ]
                s
          | _ ->
              ANSITerminal.print_string
-               [ ansi_style_from_tile_and_size ints.(r).(c) h ]
+               [
+                 ansi_style_from_tile_and_size ints.(r).(c) h;
+                 ANSITerminal.on_default;
+               ]
                (String.sub s 0 3));
       print_char '|'
     done;

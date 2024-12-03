@@ -28,28 +28,87 @@ let format_time s =
   let secs = string_of_int (s mod 60) in
   if s mod 60 > 9 then mins ^ ":" ^ secs else mins ^ ":0" ^ secs
 
-let print_help () =
-  print_endline "Instructions:";
-  Unix.sleepf 0.5;
+(*Print instructions with an extra explanation of the current gamemode*)
+let print_help mode =
+  (*Pause for t secs only if not in a timed mode*)
+  let sleepf_if_untimed t = if mode <> 2 && mode <> 3 then Unix.sleepf t in
+  (*Wait for confirmation if not in a timed mode*)
+  let enter_if_untimed () =
+    if mode <> 2 && mode <> 3 then (
+      print_endline "Press enter to continue.";
+      ignore (input_char stdin))
+  in
+  print_endline "\n\n\nInstructions:";
+  sleepf_if_untimed 0.5;
   print_endline
     "-To make moves, type w, a, s, or d corresponding to the direction in \
      which to move a tile into the gap.";
-  Unix.sleepf 0.5;
+  sleepf_if_untimed 0.5;
   print_endline "-Press enter after each one.";
-  Unix.sleepf 0.5;
+  sleepf_if_untimed 0.5;
   print_endline
     "\t-Hint: think of this as moving the gap in the opposite direction.";
-  Unix.sleepf 0.5;
+  sleepf_if_untimed 0.5;
+  print_endline
+    "-Your goal is to get the board in a configuration where numbers increase \
+     from left to right across rows, with the empty tile in the bottom right \
+     corner, like this:";
+  let solve3 = Board.initialize_board 3 in
+  Board.fill_board solve3;
+  Ui.print_grid solve3;
+  enter_if_untimed ();
   print_endline "-To see this help later, type 'help'.";
-  Unix.sleepf 0.5;
+  sleepf_if_untimed 0.5;
   print_endline "-To see a simulation of the solution, type 'simulate'.";
-  Unix.sleepf 0.5;
+  sleepf_if_untimed 0.5;
   print_endline "-To quit, type 'stop'.\n";
-  Unix.sleep 1;
-  print_endline "Press enter to continue.";
-  ignore (input_char stdin)
+  sleepf_if_untimed 1.;
+  enter_if_untimed ();
+  match mode with
+  | 2 ->
+      print_endline
+        "Time Trial Mode:\n\
+         -Same as normal, but after each move the game will print your current \
+         time.\n\
+         -When you finish, it will say how long you took.";
+      print_endline "Press enter to continue.";
+      ignore (input_char stdin)
+  | 3 ->
+      print_endline
+        "Race the Clock Mode:\n\
+         -At the beginning, you set a time limit.\n\
+         -After each move, the game will print how much time you have left.\n\
+         -When the time hits 0, the game will end after your next move.";
+      print_endline "Press enter to continue.";
+      ignore (input_char stdin)
+  | 4 ->
+      print_string "Color Mode:\n-The colors ";
+      ANSITerminal.(print_string [ red ] "red");
+      print_string ", ";
+      ANSITerminal.(print_string [ yellow ] "yellow");
+      print_string ", ";
+      ANSITerminal.(print_string [ green ] "green");
+      print_string ", ";
+      ANSITerminal.(print_string [ cyan ] "cyan");
+      print_string ", ";
+      ANSITerminal.(print_string [ blue ] "blue");
+      print_string ", ";
+      ANSITerminal.(print_string [ magenta ] "magenta");
+      print_endline
+        ", and white appear to make the solution easier to find.\n\
+         -In that order, the colors go from top left to bottom right in the \
+         solution.\n\
+         -Press enter for an example:";
+      ignore (input_char stdin);
+      let solve8 = Board.initialize_board 8 in
+      Board.fill_board solve8;
+      Ui.print_grid_styled solve8;
+      print_endline "Press enter to continue.";
+      ignore (input_char stdin)
+  | _ -> ()
 
 let main mode =
+  let num_moves = ref 0 in
   Random.self_init ();
   let board = Board.initialize_board (ask_size ()) in
   Board.fill_board board;
@@ -63,21 +122,24 @@ let main mode =
   let moves_copy = copy_stack moves in
   if not (Array.exists (fun x -> x = "skip") Sys.argv) then (
     print_endline "\n\n\n";
-    print_help ());
+    print_help mode);
   let unsolved = ref true in
   let time_limit = if mode = 3 then ask_time () else 0 in
   let start_time =
     if mode = 2 || mode = 3 then (*Start stopwatch*) Unix.time () else 0.
   in
-  if mode = 4 then Ui.print_grid_styled board else Ui.print_grid board;
+  let print_board board =
+    if mode = 4 then Ui.print_grid_styled board else Ui.print_grid board
+  in
+  print_board board;
   while !unsolved do
     let m = input_line stdin in
     if String.uppercase_ascii m = "STOP" then (
       print_string "Quitting.";
       exit 0)
     else if String.uppercase_ascii m = "HELP" then (
-      print_help ();
-      if mode = 4 then Ui.print_grid_styled board else Ui.print_grid board)
+      print_help mode;
+      print_board board)
     else if String.uppercase_ascii m = "SIMULATE" then (
       let board_copy = Board.copy_board init_board in
       let copy_moves = copy_stack moves_copy in
@@ -88,11 +150,12 @@ let main mode =
       Unix.sleepf 1.0;
       print_endline "Simulation complete. Returning to game...";
       Unix.sleepf 2.0;
-      if mode = 4 then Ui.print_grid_styled board else Ui.print_grid board)
+      print_board board)
     else (
       Board.move_tile board m;
       if List.mem (String.lowercase_ascii m) [ "w"; "a"; "s"; "d" ] then
-        if mode = 4 then Ui.print_grid_styled board else Ui.print_grid board;
+        incr num_moves;
+      print_board board;
       if mode = 2 then
         print_endline
           ("Current time: "
@@ -107,6 +170,7 @@ let main mode =
          else print_endline ("Time left: " ^ format_time time_left));
       if Board.check_correct_board board then (
         print_endline "Success!";
+        print_endline ("You took " ^ string_of_int !num_moves ^ " moves!");
         if mode = 2 then
           print_endline
             ("Your time was "
