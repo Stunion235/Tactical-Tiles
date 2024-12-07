@@ -30,6 +30,26 @@ let tests =
         (Board.is_move_valid board "s" && Board.is_move_valid board "d") );
   ]
 
+let make_find_empty_test name input expected =
+  name >:: fun _ ->
+  let grid = Board.of_intarrayarray input in
+  let actual = Board.find_empty grid in
+  assert_equal expected actual ~msg:name
+
+let find_empty_tests =
+  "find empty tests"
+  >::: [
+         make_find_empty_test "empty tile at bottom-right"
+           [| [| 1; 2; 3 |]; [| 4; 5; 6 |]; [| 7; 8; -1 |] |]
+           (2, 2);
+         make_find_empty_test "empty tile in the middle"
+           [| [| 1; 2; 3 |]; [| 4; -1; 6 |]; [| 7; 8; 5 |] |]
+           (1, 1);
+         make_find_empty_test "empty tile at top-left"
+           [| [| -1; 2; 3 |]; [| 4; 5; 6 |]; [| 7; 8; 9 |] |]
+           (0, 0);
+       ]
+
 let qtests =
   [
     QCheck2.Test.make ~count:50
@@ -189,9 +209,32 @@ let qtests =
         let solved_board = Board.initialize_board size in
         Board.fill_board solved_board;
         Board.to_intarrayarray init_board = Board.to_intarrayarray solved_board);
+    QCheck2.Test.make ~count:8 ~name:"Shuffling a board generates valid moves"
+      (QCheck2.Gen.pair
+         (QCheck2.Gen.int_range 3 10)
+         (QCheck2.Gen.oneofl [ "easy"; "medium"; "hard" ]))
+      (fun (size, difficulty) ->
+        let board = Board.initialize_board size in
+        Board.fill_board board;
+        let board_copy = Board.copy_board board in
+        let moves = Board.shuffle board difficulty in
+        let moves_list =
+          moves
+          |> Stack.fold (fun acc x -> x :: acc) []
+          |> List.filter (fun x -> x <> "")
+        in
+        List.fold_left
+          (fun acc move ->
+            if not acc then false
+            else if not (Board.is_move_valid board_copy move) then false
+            else (
+              Board.move_tile board_copy move;
+              true))
+          true moves_list);
   ]
 
 let _ =
   Random.self_init ();
   run_test_tt_main
-    ("tests" >::: tests @ QCheck_runner.to_ounit2_test_list qtests)
+    ("tests" >::: tests @ QCheck_runner.to_ounit2_test_list qtests);
+  run_test_tt_main find_empty_tests
