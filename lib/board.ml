@@ -135,42 +135,6 @@ let shuffle board difficulty =
       print_endline "Enter a valid difficulty";
       shuffle_moves
 
-let shuffle2 board difficulty =
-  let direction = [ "W"; "A"; "S"; "D" ] in
-  let opposite_move = function
-    | "W" -> "S"
-    | "S" -> "W"
-    | "A" -> "D"
-    | "D" -> "A"
-    | "" -> ""
-    | _ -> failwith "Invalid move"
-  in
-  let difficulty = String.lowercase_ascii difficulty in
-  let shuffle_moves = Stack.create () in
-  let rec shuffle_aux n last_move =
-    match n with
-    | 0 -> ()
-    | _ ->
-        let rec get_next_move () =
-          let move = List.nth direction (Random.int 4) in
-          if
-            (last_move = "" && is_move_valid board move)
-            || (move <> opposite_move last_move && is_move_valid board move)
-          then move
-          else get_next_move ()
-        in
-        let move = get_next_move () in
-
-        move_tile board move;
-        Stack.push move shuffle_moves;
-        shuffle_aux (n - 1) move
-  in
-  match difficulty with
-  | "easy" -> shuffle_aux (Array.length board * Array.length board) ""
-  | "medium" -> shuffle_aux (Array.length board * Array.length board * 4) ""
-  | "hard" -> shuffle_aux (Array.length board * Array.length board * 8) ""
-  | _ -> print_endline "Enter a valid difficulty"
-
 let check_correct_board board =
   let size = Array.length board in
   let acc = ref 1 in

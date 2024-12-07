@@ -39,7 +39,6 @@ val to_intlistlist : grid -> int list list
 val shuffle : grid -> string -> string Stack.t
 (**Mutate a board in place to shuffle its tiles. Return a stack containing a
    list of random moves made.*)
-val shuffle2 : grid -> string -> unit
 
 val check_correct_board : grid -> bool
 (*Return whether or not the board is solved*)
