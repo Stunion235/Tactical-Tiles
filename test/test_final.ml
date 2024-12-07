@@ -247,9 +247,194 @@ let is_move_valid_invalid_move_tests =
            false;
        ]
 
+let qtests2 =
+  [
+    QCheck.Test.make ~name:"make_board contains exactly two 2s" QCheck.unit
+      ~count:8 (fun () ->
+        let board = Board2.make_board () in
+        let int_list = Board2.to_intlistlist board in
+        let twos_count = ref 0 in
+        let valid = ref true in
+        List.iter
+          (fun row ->
+            List.iter
+              (fun value ->
+                if value = -1 then ()
+                else if value = 2 then incr twos_count
+                else valid := false)
+              row)
+          int_list;
+        (* Debugging output in case of failure *)
+        if not (!twos_count = 2 || !valid) then (
+          Printf.printf "Test failed. Board:\n";
+          List.iter
+            (fun row ->
+              List.iter (fun value -> Printf.printf "%d " value) row;
+              print_endline "")
+            int_list;
+          Printf.printf "Twos count: %d\n" !twos_count;
+          Printf.printf "Valid: %b\n" !valid);
+        !twos_count = 2 && !valid);
+  ]
+
+let make_turn_test name input expected =
+  name >:: fun _ ->
+  let grid = Board2.of_intarrayarray input in
+  let actual = Board2.to_intarrayarray (Board2.turn grid) in
+  assert_equal expected actual ~msg:name
+
+let turn_tests =
+  "find empty tests"
+  >::: [
+         make_turn_test "one value in grid"
+           [|
+             [| -1; -1; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; 2 |];
+           |];
+         make_turn_test "2 values turned"
+           [|
+             [| -1; 2; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; 2; -1; -1 |];
+           |];
+         make_turn_test "doesn't change"
+           [|
+             [| -1; -1; -1; -1 |];
+             [| -1; 2; 2; -1 |];
+             [| -1; 2; 2; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; -1 |];
+             [| -1; 2; 2; -1 |];
+             [| -1; 2; 2; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+       ]
+
+let make_compress_test name input expected =
+  name >:: fun _ ->
+  let grid = Board2.of_intarrayarray input in
+  let actual = Board2.to_intarrayarray (Board2.compress grid) in
+  assert_equal expected actual ~msg:name
+
+let compress_tests =
+  "find empty tests"
+  >::: [
+         make_compress_test "one value in grid"
+           [|
+             [| -1; -1; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| 2; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+         make_compress_test "2 values compressed, space in between"
+           [|
+             [| -1; 2; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| 2; 2; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+         make_compress_test "middle values compressed"
+           [|
+             [| -1; -1; -1; -1 |];
+             [| -1; 2; 2; -1 |];
+             [| -1; 2; 2; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; -1 |];
+             [| 2; 2; -1; -1 |];
+             [| 2; 2; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+       ]
+
+let make_merge_test name input expected =
+  name >:: fun _ ->
+  let grid = Board2.of_intarrayarray input in
+  let actual = Board2.to_intarrayarray (Board2.merge grid) in
+  assert_equal expected actual ~msg:name
+
+let merge_tests =
+  "merge rows"
+  >::: [
+         make_merge_test "one value in grid"
+           [|
+             [| 2; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| 2; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+         make_merge_test "2 values compressed"
+           [|
+             [| 2; 2; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| 4; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+         make_merge_test "full row"
+           [|
+             [| -1; -1; -1; -1 |];
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; -1 |];
+             [| 4; 4; -1; -1 |];
+             [| 4; 4; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+       ]
+
 let _ =
   Random.self_init ();
   run_test_tt_main
     ("tests" >::: tests @ QCheck_runner.to_ounit2_test_list qtests);
   run_test_tt_main find_empty_tests;
-  run_test_tt_main is_move_valid_invalid_move_tests
+  run_test_tt_main is_move_valid_invalid_move_tests;
+  run_test_tt_main turn_tests;
+  run_test_tt_main compress_tests;
+  run_test_tt_main merge_tests;
+  run_test_tt_main
+    ("tests" >::: tests @ QCheck_runner.to_ounit2_test_list qtests2)
