@@ -233,8 +233,23 @@ let qtests =
           true moves_list);
   ]
 
+let make_is_move_valid_invalid_move_test name input board expected =
+  name >:: fun _ ->
+  let actual = Board.is_move_valid board input in
+  assert_equal expected actual ~msg:name
+
+let is_move_valid_invalid_move_tests =
+  "is_move_valid invalid move tests"
+  >::: [
+         make_is_move_valid_invalid_move_test "Invalid move input 'X'" "X"
+           (Board.of_intarrayarray
+              [| [| 1; 2; 3 |]; [| 4; 5; 6 |]; [| 7; 8; -1 |] |])
+           false;
+       ]
+
 let _ =
   Random.self_init ();
   run_test_tt_main
     ("tests" >::: tests @ QCheck_runner.to_ounit2_test_list qtests);
-  run_test_tt_main find_empty_tests
+  run_test_tt_main find_empty_tests;
+  run_test_tt_main is_move_valid_invalid_move_tests
