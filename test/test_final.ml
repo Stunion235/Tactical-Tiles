@@ -13,22 +13,23 @@ let solve board shuffle_moves =
       | "d" | "D" -> "a"
       | _ -> failwith "Invalid move"
     in
-    Board.move_tile board inverse_move
+    ignore (Board.move_tile board inverse_move)
   done
 
 let tests =
-  [
-    ( "Correctly detect invalid moves" >:: fun _ ->
-      let board = Board.initialize_board 3 in
-      Board.fill_board board;
-      assert_equal false
-        (Board.is_move_valid board "w" || Board.is_move_valid board "a") );
-    ( "Correctly detect valid moves" >:: fun _ ->
-      let board = Board.initialize_board 3 in
-      Board.fill_board board;
-      assert_equal true
-        (Board.is_move_valid board "s" && Board.is_move_valid board "d") );
-  ]
+  "misc tests"
+  >::: [
+         ( "Correctly detect invalid moves" >:: fun _ ->
+           let board = Board.initialize_board 3 in
+           Board.fill_board board;
+           assert_equal false
+             (Board.is_move_valid board "w" || Board.is_move_valid board "a") );
+         ( "Correctly detect valid moves" >:: fun _ ->
+           let board = Board.initialize_board 3 in
+           Board.fill_board board;
+           assert_equal true
+             (Board.is_move_valid board "s" && Board.is_move_valid board "d") );
+       ]
 
 let make_find_empty_test name input expected =
   name >:: fun _ ->
@@ -50,6 +51,29 @@ let find_empty_tests =
            (0, 0);
        ]
 
+let make_basic_undo_test name moves expected =
+  name >:: fun _ ->
+  let grid = Board.initialize_board 2 in
+  Board.fill_board grid;
+  let test_moves = Stack.create () in
+  List.iter
+    (fun x ->
+      Stack.push x test_moves;
+      ignore (Board.move_tile grid x))
+    moves;
+  let actual = Board.undo grid test_moves in
+  assert_equal expected actual ~msg:name ~printer:(fun x ->
+      if x then "true" else "false")
+
+let basic_undo_tests =
+  "Simple undo tests"
+  >::: [
+         make_basic_undo_test "Undoing one valid move returns true" [ "s" ] true;
+         make_basic_undo_test "Undoing one invalid move returns true" [ "w" ]
+           true;
+         make_basic_undo_test "Undoing no moves returns false" [] false;
+       ]
+
 let qtests =
   [
     QCheck2.Test.make ~count:50
@@ -64,7 +88,7 @@ let qtests =
         let board_as_list = List.flatten (Board.to_intlistlist board) in
         (*Since QCheck's ~print prints the inputs that caused failure instead of
           the objects that failed to compare, we improvise this to print the
-          board only in failure, like ~print in OUnit2's assert_equal*)
+          board only in failure, like ~printer in OUnit2's assert_equal*)
         let passed =
           List.length (List.filter (fun y -> y = -1) board_as_list) = 1
           && List.length
@@ -149,7 +173,8 @@ let qtests =
         let board = Board.initialize_board (List.nth x 0) in
         Board.fill_board board;
         let initial = Board.to_intlistlist board in
-        Board.move_tile board "w" (*1st move W is never valid*);
+        ignore (Board.move_tile board "w")
+        (*1st move W is never valid on unshuffled board*);
         let final = Board.to_intlistlist board in
         let passed = initial = final in
         if not passed then Ui.print_grid board;
@@ -162,7 +187,8 @@ let qtests =
         let board = Board.initialize_board (List.nth x 0) in
         Board.fill_board board;
         let initial = Board.to_intlistlist board in
-        Board.move_tile board "s" (*1st move S is always valid*);
+        ignore (Board.move_tile board "s")
+        (*1st move S is always valid on unshuffled board*);
         let final = Board.to_intlistlist board in
         let passed = initial <> final in
         if not passed then Ui.print_grid board;
@@ -203,7 +229,7 @@ let qtests =
         let random_moves = 10 in
         for _ = 1 to random_moves do
           let direction = List.nth [ "w"; "a"; "s"; "d" ] (Random.int 4) in
-          Board.move_tile board direction
+          ignore (Board.move_tile board direction)
         done;
         Ui.simulate_solution ~delay:0.0 ~debug:true init_board moves;
         let solved_board = Board.initialize_board size in
@@ -228,9 +254,71 @@ let qtests =
             if not acc then false
             else if not (Board.is_move_valid board_copy move) then false
             else (
-              Board.move_tile board_copy move;
+              ignore (Board.move_tile board_copy move);
               true))
           true moves_list);
+    QCheck2.Test.make ~count:15
+      ~name:
+        "Making any number of valid moves and then undoing them returns the \n\
+         board to its initial state"
+      ~print:QCheck.Print.(list int)
+      QCheck2.Gen.(list_size (int_range 2 2) (int_range 2 9))
+      (fun x ->
+        let board = Board.initialize_board (List.nth x 0) in
+        Board.fill_board board;
+        let initial = Board.to_intlistlist board in
+        let test_moves = Stack.create () in
+        for _ = 1 to List.nth x 1 do
+          let direction = List.nth [ "w"; "a"; "s"; "d" ] (Random.int 4) in
+          if Board.is_move_valid board direction then (
+            ignore (Board.move_tile board direction);
+            Stack.push direction test_moves)
+        done;
+        for _ = 1 to List.nth x 1 do
+          ignore (Board.undo board test_moves)
+        done;
+        let final = Board.to_intlistlist board in
+        let passed = initial = final in
+        if not passed then Ui.print_grid board;
+        passed);
+    QCheck2.Test.make ~count:15
+      ~name:
+        "Undoing the moves made by shuffling the board returns the board to its \n\
+         initial state"
+      ~print:QCheck.Print.(list int)
+      QCheck2.Gen.(list_size (int_range 2 2) (int_range 2 9))
+      (fun x ->
+        let board = Board.initialize_board (List.nth x 0) in
+        Board.fill_board board;
+        let initial = Board.to_intlistlist board in
+        let shuf_moves = Board.shuffle board "easy" in
+        for _ = 1 to Stack.length shuf_moves do
+          ignore (Board.undo board shuf_moves)
+        done;
+        let final = Board.to_intlistlist board in
+        let passed = initial = final in
+        if not passed then Ui.print_grid board;
+        passed);
+    QCheck2.Test.make ~count:8
+      ~name:
+        "Making multiple valid moves and then undoing only one does NOT return \n\
+         the board to its initial state"
+      ~print:QCheck.Print.(list int)
+      QCheck2.Gen.(list_size (int_range 2 2) (int_range 2 9))
+      (fun x ->
+        let board = Board.initialize_board (List.nth x 0) in
+        Board.fill_board board;
+        let initial = Board.to_intlistlist board in
+        let test_moves = Stack.create () in
+        ignore (Board.move_tile board "d");
+        Stack.push "d" test_moves;
+        ignore (Board.move_tile board "a");
+        Stack.push "a" test_moves;
+        ignore (Board.undo board test_moves);
+        let final = Board.to_intlistlist board in
+        let passed = initial <> final in
+        if not passed then Ui.print_grid board;
+        passed);
   ]
 
 let make_is_move_valid_invalid_move_test name input board expected =
@@ -238,8 +326,8 @@ let make_is_move_valid_invalid_move_test name input board expected =
   let actual = Board.is_move_valid board input in
   assert_equal expected actual ~msg:name
 
-let is_move_valid_invalid_move_tests =
-  "is_move_valid invalid move tests"
+let invalid_input_tests =
+  "is_move_valid tests for an invalid input"
   >::: [
          make_is_move_valid_invalid_move_test "Invalid move input 'X'" "X"
            (Board.of_intarrayarray
@@ -249,7 +337,8 @@ let is_move_valid_invalid_move_tests =
 
 let _ =
   Random.self_init ();
-  run_test_tt_main
-    ("tests" >::: tests @ QCheck_runner.to_ounit2_test_list qtests);
+  run_test_tt_main tests;
   run_test_tt_main find_empty_tests;
-  run_test_tt_main is_move_valid_invalid_move_tests
+  run_test_tt_main invalid_input_tests;
+  run_test_tt_main basic_undo_tests;
+  run_test_tt_main ("Qcheck tests" >::: QCheck_runner.to_ounit2_test_list qtests)

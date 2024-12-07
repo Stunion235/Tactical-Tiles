@@ -116,7 +116,7 @@ let simulate_solution ?(delay = 1.0) ?(debug = false) board shuffle_moves =
       | "d" | "D" -> "a"
       | _ -> failwith "Invalid move"
     in
-    move_tile board inverse_move;
+    ignore (move_tile board inverse_move);
     if not debug then print_grid board;
     if delay > 0.0 then Unix.sleepf delay
   done

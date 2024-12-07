@@ -29,9 +29,9 @@ val fill_board : grid -> unit
 val is_move_valid : grid -> string -> bool
 (***Return whether or not it is valid to make a given move on a given board*)
 
-val move_tile : grid -> string -> unit
+val move_tile : grid -> string -> bool
 (**Mutate a board in place to represent moving a tile. Does nothing if the move
-   is invalid.*)
+   is invalid. Returns if the move was valid.*)
 
 val to_intlistlist : grid -> int list list
 (**Int list list representation of a board for tests.*)
@@ -45,3 +45,7 @@ val check_correct_board : grid -> bool
 
 val copy_board : grid -> grid
 (**Return a copy of a board*)
+
+val undo : grid -> string Stack.t -> bool
+(**Undo the most recent move, returning if that modified the board. Requires
+   that the stack consists of only valid moves.*)

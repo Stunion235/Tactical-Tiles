@@ -17,7 +17,9 @@ let rec ask_mode () =
   with Failure _ -> ask_mode ()
 
 let () =
-  if not (Array.exists (fun x -> x = "skip") Sys.argv) then (
+  if Array.exists (fun x -> x = "skip") Sys.argv then
+    print_endline "Intro skipped."
+  else (
     print_endline "\n";
     print_string "Welcome to the ";
     ANSITerminal.(print_string [ cyan ] "H");
@@ -38,5 +40,19 @@ let () =
     Unix.sleepf 1.5;
     print_endline "Press enter to continue.";
     ignore (input_char stdin));
-  let mode = ask_mode () in
-  Driver.main mode
+  let mode = ref 0 in
+  match
+    Array.find_opt (fun x -> String.starts_with x ~prefix:"mode") Sys.argv
+  with
+  | None -> mode := ask_mode ()
+  | Some m ->
+      (let arg = String.sub m 4 (String.length m - 4) in
+       try
+         mode := int_of_string arg;
+         if !mode > 0 && !mode < 5 then
+           print_endline ("Automatically chose mode " ^ arg ^ ".")
+         else failwith "mode"
+       with Failure _ ->
+         print_endline ("Mode `" ^ arg ^ "` is invalid. Pick a mode.");
+         mode := ask_mode ());
+      Driver.main !mode

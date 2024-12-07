@@ -63,44 +63,51 @@ let is_move_valid board move =
   | "D" | "d" -> in_bound ey (ex - 1) board
   | _ -> false
 
+let opposite_move = function
+  | "W" | "w" -> "S"
+  | "S" | "s" -> "W"
+  | "A" | "a" -> "D"
+  | "D" | "d" -> "A"
+  | "" -> ""
+  | _ -> failwith "Invalid move"
+
 let move_tile grid direction =
   let ey, ex = find_empty grid in
+  let valid = is_move_valid grid direction in
   match direction with
   | "W" | "w" ->
-      if is_move_valid grid direction then (
+      if valid then (
         grid.(ey).(ex) <- grid.(ey + 1).(ex);
         grid.(ey + 1).(ex) <- Empty)
-      else ()
+      else ();
+      valid
   | "A" | "a" ->
-      if is_move_valid grid direction then (
+      if valid then (
         grid.(ey).(ex) <- grid.(ey).(ex + 1);
         grid.(ey).(ex + 1) <- Empty)
-      else ()
+      else ();
+      valid
   | "S" | "s" ->
-      if is_move_valid grid direction then (
+      if valid then (
         grid.(ey).(ex) <- grid.(ey - 1).(ex);
         grid.(ey - 1).(ex) <- Empty)
-      else ()
+      else ();
+      valid
   | "D" | "d" ->
-      if is_move_valid grid direction then (
+      if valid then (
         grid.(ey).(ex) <- grid.(ey).(ex - 1);
         grid.(ey).(ex - 1) <- Empty)
-      else ()
-  | _ -> print_endline "This is an invalid input. Type w, a, s, or d."
+      else ();
+      valid
+  | _ ->
+      print_endline "This is an invalid input. Type w, a, s, or d.";
+      false
 
 let to_intlistlist (g : grid) =
   to_intarrayarray g |> Array.map Array.to_list |> Array.to_list
 
 let shuffle board difficulty =
   let direction = [ "W"; "A"; "S"; "D" ] in
-  let opposite_move = function
-    | "W" -> "S"
-    | "S" -> "W"
-    | "A" -> "D"
-    | "D" -> "A"
-    | "" -> ""
-    | _ -> failwith "Invalid move"
-  in
   let difficulty = String.lowercase_ascii difficulty in
   let shuffle_moves = Stack.create () in
   let rec shuffle_aux n last_move =
@@ -117,7 +124,7 @@ let shuffle board difficulty =
         in
         let move = get_next_move () in
 
-        move_tile board move;
+        ignore (move_tile board move);
         Stack.push move shuffle_moves;
         shuffle_aux (n - 1) move
   in
@@ -153,3 +160,9 @@ let check_correct_board board =
 
 let copy_board (board : grid) : grid =
   Array.map (fun row -> Array.map (fun tile -> tile) row) board
+
+let undo board user_moves =
+  if Stack.is_empty user_moves then false
+  else (
+    ignore (move_tile board (opposite_move (Stack.pop user_moves)));
+    true)
