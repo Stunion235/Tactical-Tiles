@@ -111,109 +111,102 @@ let main mode =
   let num_moves = ref 0 in
   Random.self_init ();
   let size = ref 0 in
-  match
-    Array.find_opt (fun x -> String.starts_with x ~prefix:"size") Sys.argv
-  with
+  (match
+     Array.find_opt (fun x -> String.starts_with x ~prefix:"size") Sys.argv
+   with
   | None -> size := ask_size ()
   | Some s -> (
-      (let arg = String.sub s 4 (String.length s - 4) in
-       try
-         size := int_of_string arg;
-         if !size > 1 then
-           print_endline ("Automatically chose size " ^ arg ^ ".")
-         else failwith "size"
-       with Failure _ ->
-         print_endline ("Size `" ^ arg ^ "` is invalid. Pick a size.");
-         size := ask_size ());
-      let board = Board.initialize_board !size in
-      Board.fill_board board;
-      let diff = ref "" in
-      match
-        Array.find_opt
-          (fun x -> List.mem x [ "easy"; "medium"; "hard" ])
-          Sys.argv
-      with
-      | None -> diff := ask_difficulty ()
-      | Some d ->
-          diff := d;
-          print_endline ("Automatically chose " ^ d ^ " difficulty.");
-          let shuf_moves = Board.shuffle board !diff in
-          let init_board = Board.copy_board board in
-          let copy_stack (original : string Stack.t) : string Stack.t =
-            let copy = Stack.create () in
-            Stack.iter (fun elem -> Stack.push elem copy) original;
-            copy
-          in
-          let moves_copy = copy_stack shuf_moves in
-          if not (Array.exists (fun x -> x = "skip") Sys.argv) then (
-            print_endline "\n\n\n";
-            print_help mode);
-          let unsolved = ref true in
-          let user_moves = Stack.create () in
-          let time_limit = if mode = 3 then ask_time () else 0 in
-          let start_time =
-            if mode = 2 || mode = 3 then (*Start stopwatch*) Unix.time ()
-            else 0.
-          in
-          let print_board board =
-            if mode = 4 then Ui.print_grid_styled board else Ui.print_grid board
-          in
-          print_board board;
-          while !unsolved do
-            let m = input_line stdin in
-            if String.uppercase_ascii m = "STOP" then (
-              print_string "Quitting.";
-              exit 0)
-            else if String.uppercase_ascii m = "HELP" then (
-              print_help mode;
-              print_board board)
-            else if String.uppercase_ascii m = "SIMULATE" then (
-              let board_copy = Board.copy_board init_board in
-              let copy_moves = copy_stack moves_copy in
-              Unix.sleepf 1.0;
-              print_endline "Simulating solution...";
-              Unix.sleepf 2.0;
-              Ui.simulate_solution board_copy copy_moves;
-              Unix.sleepf 1.0;
-              print_endline "Simulation complete. Returning to game...";
-              Unix.sleepf 2.0;
-              print_board board)
-            else if String.uppercase_ascii m = "UNDO" then
-              if Board.undo board user_moves then Ui.print_grid board
-              else print_endline "Nothing to undo."
-            else
-              let moved = Board.move_tile board m in
-              if List.mem (String.lowercase_ascii m) [ "w"; "a"; "s"; "d" ] then (
-                incr num_moves;
-                if moved then Stack.push m user_moves);
-              print_board board;
-              if mode = 2 then
-                print_endline
-                  ("Current time: "
-                  ^ (Unix.time () -. start_time |> int_of_float |> format_time)
-                  );
-              if mode = 3 then (
-                let time_left =
-                  time_limit - int_of_float (Unix.time () -. start_time)
-                in
-                if time_left <= 0 then (
-                  print_endline "Time's up!";
-                  exit 0)
-                else print_string "Time left: ";
-                if time_left < 15 then
-                  ANSITerminal.(print_string [ red ] (format_time time_left))
-                else if time_left < 60 then
-                  ANSITerminal.(print_string [ yellow ] (format_time time_left))
-                else print_string (format_time time_left);
-                print_newline ());
-              if Board.check_correct_board board then (
-                print_endline "Success!";
-                print_endline
-                  ("You took " ^ string_of_int !num_moves ^ " moves!");
-                if mode = 2 then
-                  print_endline
-                    ("Your time was "
-                    ^ (Unix.time () -. start_time |> int_of_float |> format_time)
-                    );
-                unsolved := false)
-          done)
+      let arg = String.sub s 4 (String.length s - 4) in
+      try
+        size := int_of_string arg;
+        if !size > 1 then print_endline ("Automatically chose size " ^ arg ^ ".")
+        else failwith "size"
+      with Failure _ ->
+        print_endline ("Size `" ^ arg ^ "` is invalid. Pick a size.");
+        size := ask_size ()));
+  let board = Board.initialize_board !size in
+  Board.fill_board board;
+  let diff = ref "" in
+  (match
+     Array.find_opt (fun x -> List.mem x [ "easy"; "medium"; "hard" ]) Sys.argv
+   with
+  | None -> diff := ask_difficulty ()
+  | Some d ->
+      diff := d;
+      print_endline ("Automatically chose " ^ d ^ " difficulty."));
+  let shuf_moves = Board.shuffle board !diff in
+  let init_board = Board.copy_board board in
+  let copy_stack (original : string Stack.t) : string Stack.t =
+    let copy = Stack.create () in
+    Stack.iter (fun elem -> Stack.push elem copy) original;
+    copy
+  in
+  let moves_copy = copy_stack shuf_moves in
+  if not (Array.exists (fun x -> x = "skip") Sys.argv) then (
+    print_endline "\n\n\n";
+    print_help mode);
+  let unsolved = ref true in
+  let user_moves = Stack.create () in
+  let time_limit = if mode = 3 then ask_time () else 0 in
+  let start_time =
+    if mode = 2 || mode = 3 then (*Start stopwatch*) Unix.time () else 0.
+  in
+  let print_board board =
+    if mode = 4 then Ui.print_grid_styled board else Ui.print_grid board
+  in
+  print_board board;
+  while !unsolved do
+    let m = input_line stdin in
+    if String.uppercase_ascii m = "STOP" then (
+      print_string "Quitting.";
+      exit 0)
+    else if String.uppercase_ascii m = "HELP" then (
+      print_help mode;
+      print_board board)
+    else if String.uppercase_ascii m = "SIMULATE" then (
+      let board_copy = Board.copy_board init_board in
+      let copy_moves = copy_stack moves_copy in
+      Unix.sleepf 1.0;
+      print_endline "Simulating solution...";
+      Unix.sleepf 2.0;
+      Ui.simulate_solution board_copy copy_moves;
+      Unix.sleepf 1.0;
+      print_endline "Simulation complete. Returning to game...";
+      Unix.sleepf 2.0;
+      print_board board)
+    else if String.uppercase_ascii m = "UNDO" then
+      if Board.undo board user_moves then Ui.print_grid board
+      else print_endline "Nothing to undo."
+    else
+      let moved = Board.move_tile board m in
+      if List.mem (String.lowercase_ascii m) [ "w"; "a"; "s"; "d" ] then (
+        incr num_moves;
+        if moved then Stack.push m user_moves);
+      print_board board;
+      if mode = 2 then
+        print_endline
+          ("Current time: "
+          ^ (Unix.time () -. start_time |> int_of_float |> format_time));
+      if mode = 3 then (
+        let time_left =
+          time_limit - int_of_float (Unix.time () -. start_time)
+        in
+        if time_left <= 0 then (
+          print_endline "Time's up!";
+          exit 0)
+        else print_string "Time left: ";
+        if time_left < 15 then
+          ANSITerminal.(print_string [ red ] (format_time time_left))
+        else if time_left < 60 then
+          ANSITerminal.(print_string [ yellow ] (format_time time_left))
+        else print_string (format_time time_left);
+        print_newline ());
+      if Board.check_correct_board board then (
+        print_endline "Success!";
+        print_endline ("You took " ^ string_of_int !num_moves ^ " moves!");
+        if mode = 2 then
+          print_endline
+            ("Your time was "
+            ^ (Unix.time () -. start_time |> int_of_float |> format_time));
+        unsolved := false)
+  done

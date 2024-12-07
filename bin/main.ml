@@ -41,18 +41,18 @@ let () =
     print_endline "Press enter to continue.";
     ignore (input_char stdin));
   let mode = ref 0 in
-  match
-    Array.find_opt (fun x -> String.starts_with x ~prefix:"mode") Sys.argv
-  with
+  (match
+     Array.find_opt (fun x -> String.starts_with x ~prefix:"mode") Sys.argv
+   with
   | None -> mode := ask_mode ()
-  | Some m ->
-      (let arg = String.sub m 4 (String.length m - 4) in
-       try
-         mode := int_of_string arg;
-         if !mode > 0 && !mode < 5 then
-           print_endline ("Automatically chose mode " ^ arg ^ ".")
-         else failwith "mode"
-       with Failure _ ->
-         print_endline ("Mode `" ^ arg ^ "` is invalid. Pick a mode.");
-         mode := ask_mode ());
-      Driver.main !mode
+  | Some m -> (
+      let arg = String.sub m 4 (String.length m - 4) in
+      try
+        mode := int_of_string arg;
+        if !mode > 0 && !mode < 5 then
+          print_endline ("Automatically chose mode " ^ arg ^ ".")
+        else failwith "mode"
+      with Failure _ ->
+        print_endline ("Mode `" ^ arg ^ "` is invalid. Pick a mode.");
+        mode := ask_mode ()));
+  Driver.main !mode
