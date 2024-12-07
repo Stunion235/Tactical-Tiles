@@ -28,7 +28,7 @@ let turn board =
   for row = 0 to 3 do
     for col = 0 to 3 do
       let currTile = board.(row).(col) in
-      new_board.(col).(3 - row) <- currTile
+      new_board.(col).(row) <- currTile
     done
   done;
   new_board
@@ -62,6 +62,20 @@ let merge board =
   done;
   board
 
+let reverse board =
+  let new_board = make_empty_board () in
+  for row = 0 to 3 do
+    for col = 0 to 3 do
+      let currTile = board.(row).(col) in
+      new_board.(row).(3 - col) <- currTile
+    done
+  done;
+  new_board
+
+let move_left board = compress (merge (compress board))
+let move_up board = turn (move_left (turn board))
+let move_right board = reverse (move_left (reverse board))
+let move_down board = turn (move_right (turn board))
 let curr_state board = failwith ""
 
 let to_intarrayarray (g : grid) =

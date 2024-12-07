@@ -385,7 +385,7 @@ let turn_tests =
              [| -1; -1; -1; -1 |];
              [| -1; -1; -1; -1 |];
              [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; 2 |];
+             [| 2; -1; -1; -1 |];
            |];
          make_turn_test "2 values turned"
            [|
@@ -396,9 +396,9 @@ let turn_tests =
            |]
            [|
              [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; 2 |];
+             [| 2; -1; -1; -1 |];
              [| -1; -1; -1; -1 |];
-             [| -1; 2; -1; -1 |];
+             [| -1; -1; 2; -1 |];
            |];
          make_turn_test "doesn't change"
            [|
@@ -509,11 +509,215 @@ let merge_tests =
            |]
            [|
              [| -1; -1; -1; -1 |];
-             [| 4; 4; -1; -1 |];
-             [| 4; 4; -1; -1 |];
+             [| 4; -1; 4; -1 |];
+             [| 4; -1; 4; -1 |];
              [| -1; -1; -1; -1 |];
            |];
        ]
+
+let move_left_test name input expected =
+  name >:: fun _ ->
+  let grid = Board2.of_intarrayarray input in
+  let actual = Board2.to_intarrayarray (Board2.move_left grid) in
+  assert_equal expected actual ~msg:name
+
+let left_tests =
+  "move left"
+  >::: [
+         move_left_test "one value in grid"
+           [|
+             [| -1; -1; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| 2; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+         move_left_test "3 values moved left"
+           [|
+             [| 2; 2; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| 4; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| 2; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+         move_left_test "board filled"
+           [|
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+           |]
+           [|
+             [| 4; 4; -1; -1 |];
+             [| 4; 4; -1; -1 |];
+             [| 4; 4; -1; -1 |];
+             [| 4; 4; -1; -1 |];
+           |];
+       ]
+
+let move_up_test name input expected =
+  name >:: fun _ ->
+  let grid = Board2.of_intarrayarray input in
+  let actual = Board2.to_intarrayarray (Board2.move_up grid) in
+  assert_equal expected actual ~msg:name
+
+let up_tests =
+  "move up"
+  >::: [
+         move_up_test "one value in grid"
+           [|
+             [| -1; -1; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+         move_up_test "3 values moved up"
+           [|
+             [| 2; 2; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| 2; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| 4; 2; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+         move_up_test "board filled"
+           [|
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+           |]
+           [|
+             [| 4; 4; 4; 4 |];
+             [| 4; 4; 4; 4 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+       ]
+
+let move_right_test name input expected =
+  name >:: fun _ ->
+  let grid = Board2.of_intarrayarray input in
+  let actual = Board2.to_intarrayarray (Board2.move_right grid) in
+  assert_equal expected actual ~msg:name
+
+let right_tests =
+  "move right"
+  >::: [
+         move_up_test "one value in grid"
+           [|
+             [| 2; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+         move_up_test "3 values moved right"
+           [|
+             [| 2; 2; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| 2; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; 4 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+           |];
+         move_up_test "board filled"
+           [|
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+           |]
+           [|
+             [| -1; -1; 4; 4 |];
+             [| -1; -1; 4; 4 |];
+             [| -1; -1; 4; 4 |];
+             [| -1; -1; 4; 4 |];
+           |];
+       ]
+
+let move_down_test name input expected =
+  name >:: fun _ ->
+  let grid = Board2.of_intarrayarray input in
+  let actual = Board2.to_intarrayarray (Board2.move_down grid) in
+  assert_equal expected actual ~msg:name
+
+let down_tests =
+  "move down"
+  >::: [
+         move_up_test "one value in grid"
+           [|
+             [| 2; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| 2; -1; -1; -1 |];
+           |];
+         move_up_test "3 values moved down"
+           [|
+             [| 2; 2; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| 2; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| 4; 2; -1; -1 |];
+           |];
+         move_up_test "board filled"
+           [|
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+           |]
+           [|
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| 4; 4; 4; 4 |];
+             [| 4; 4; 4; 4 |];
+           |];
+       ]
+
+let all_board2_tests =
+  "board tests"
+  >::: [ turn_tests; compress_tests; merge_tests; left_tests; up_tests ]
 
 let _ =
   Random.self_init ();
@@ -521,9 +725,7 @@ let _ =
   run_test_tt_main find_empty_tests;
   run_test_tt_main invalid_input_tests;
   run_test_tt_main basic_undo_tests;
-  run_test_tt_main merge_tests;
-  run_test_tt_main compress_tests;
-  run_test_tt_main turn_tests;
+  run_test_tt_main all_board2_tests;
   run_test_tt_main ("Qcheck tests" >::: QCheck_runner.to_ounit2_test_list qtests);
   run_test_tt_main
     ("Qcheck tests" >::: QCheck_runner.to_ounit2_test_list qtests2)
