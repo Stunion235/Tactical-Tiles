@@ -21,7 +21,7 @@ let grid_to_string g =
         else
           !acc
           ^ (match String.length s with
-            | 0 -> "   "
+            | 0 -> ("impossible" [@coverage off])
             | 1 -> " " ^ s ^ " "
             | 2 -> " " ^ s
             | 3 -> s
@@ -109,11 +109,11 @@ let simulate_solution ?(delay = 1.0) ?(debug = false) board shuffle_moves =
   while not (Stack.is_empty shuffle_moves) do
     let move = Stack.pop shuffle_moves in
     let inverse_move =
-      match move with
-      | "w" | "W" -> "s"
-      | "a" | "A" -> "d"
-      | "s" | "S" -> "w"
-      | "d" | "D" -> "a"
+      match String.lowercase_ascii move with
+      | "w" -> "s"
+      | "a" -> "d"
+      | "s" -> "w"
+      | "d" -> "a"
       | _ -> failwith "Invalid move"
     in
     ignore (move_tile board inverse_move);
