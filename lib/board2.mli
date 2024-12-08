@@ -38,6 +38,10 @@ val curr_state : grid -> string
 (**Return the current state of the game. The state is either "WON", "GAME NOT
    OVER", or "LOST"*)
 
+val make_move : grid -> string -> grid
+(**Call the corresponding move function based on user input. Returns the same
+   board if the input is invalid. *)
+
 val to_intlistlist : grid -> int list list
 (**Int list list representation of a board for tests.*)
 

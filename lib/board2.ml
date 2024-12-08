@@ -122,6 +122,15 @@ let curr_state board =
   else if !empty = true then "GAME NOT OVER"
   else "LOST"
 
+let make_move board = function
+  | "W" | "w" -> move_up board
+  | "A" | "a" -> move_left board
+  | "S" | "s" -> move_down board
+  | "D" | "d" -> move_right board
+  | _ ->
+      print_endline "This is an invalid input. Type w, a, s, or d";
+      board
+
 let to_intarrayarray (g : grid) =
   Array.map
     (Array.map (fun t ->
