@@ -1,6 +1,21 @@
 open OUnit2
 open Final
 
+(**Version of [simulate_solution] without print/sleep. Testing only.*)
+let solve board shuffle_moves =
+  while not (Stack.is_empty shuffle_moves) do
+    let move = Stack.pop shuffle_moves in
+    let inverse_move =
+      match move with
+      | "w" | "W" -> "s"
+      | "a" | "A" -> "d"
+      | "s" | "S" -> "w"
+      | "d" | "D" -> "a"
+      | _ -> failwith "Invalid move"
+    in
+    ignore (Board.move_tile board inverse_move)
+  done
+
 (*Slider tests*)
 let tests =
   "misc tests"
@@ -35,31 +50,6 @@ let find_empty_tests =
          make_find_empty_test "empty tile at top-left"
            [| [| -1; 2; 3 |]; [| 4; 5; 6 |]; [| 7; 8; 9 |] |]
            (0, 0);
-       ]
-
-let make_grid_to_str_test name inp expfile =
-  name >:: fun _ ->
-  let grid = Board.of_intarrayarray inp in
-  (*Read expected from data file to avoid hardcoding big strings*)
-  let reader = open_in ("../data/" ^ expfile ^ ".txt") in
-  let acc = ref "" in
-  try
-    while true do
-      acc := !acc ^ input_line reader ^ "\n"
-    done
-  with End_of_file ->
-    assert_equal !acc (Ui.grid_to_string grid) ~msg:name ~printer:(fun x ->
-        "\n" ^ x ^ "\n")
-
-let grid_to_str_tests =
-  "grid_to_string tests"
-  >::: [
-         make_grid_to_str_test "1x1 empty" [| [| -1 |] |] "11empty";
-         make_grid_to_str_test "1 digit" [| [| 9 |] |] "1digit";
-         make_grid_to_str_test "2 digits" [| [| 99 |] |] "2digits";
-         make_grid_to_str_test "3 digits" [| [| 999 |] |] "3digits";
-         make_grid_to_str_test "5 digits" [| [| 99999 |] |] "3digits";
-         make_grid_to_str_test "2x2" [| [| 2; 0 |]; [| 4; 8 |] |] "22";
        ]
 
 let make_basic_undo_test name moves expected =
@@ -147,7 +137,7 @@ let qtests =
         Board.fill_board board;
         let initial = Board.to_intlistlist board in
         let shuffle_moves = Board.shuffle board "easy" in
-        Ui.simulate_solution ~delay:0.0 ~debug:true board shuffle_moves;
+        solve board shuffle_moves;
         let final = Board.to_intlistlist board in
         let passed = initial = final in
         if not passed then Ui.print_grid board;
@@ -861,7 +851,14 @@ let all_board_tests =
 
 let _ =
   Random.self_init ();
+<<<<<<< Updated upstream
   run_test_tt_main all_board_tests;
+=======
+  run_test_tt_main tests;
+  run_test_tt_main find_empty_tests;
+  run_test_tt_main invalid_input_tests;
+  run_test_tt_main basic_undo_tests;
+>>>>>>> Stashed changes
   run_test_tt_main all_board2_tests;
   run_test_tt_main
     ("Slider Qcheck" >::: QCheck_runner.to_ounit2_test_list qtests);

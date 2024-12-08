@@ -210,3 +210,5 @@ let main mode =
             ^ (Unix.time () -. start_time |> int_of_float |> format_time));
         unsolved := false)
   done
+
+let main_2048 = ANSITerminal.(print_string [ blue ] "Mode")
