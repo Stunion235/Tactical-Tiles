@@ -123,10 +123,10 @@ let curr_state board =
   else "LOST"
 
 let make_move board = function
-  | "W" | "w" -> move_up board
-  | "A" | "a" -> move_left board
-  | "S" | "s" -> move_down board
-  | "D" | "d" -> move_right board
+  | "W" | "w" -> board |> move_up |> add_new
+  | "A" | "a" -> board |> move_left |> add_new
+  | "S" | "s" -> board |> move_down |> add_new
+  | "D" | "d" -> board |> move_right |> add_new
   | _ ->
       print_endline "This is an invalid input. Type w, a, s, or d";
       board
