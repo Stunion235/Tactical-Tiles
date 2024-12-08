@@ -786,8 +786,63 @@ let down_tests =
            |];
        ]
 
-let all_board2_tests =
+let curr_state_test name input expected =
+  name >:: fun _ ->
+  let grid = Board2.of_intarrayarray input in
+  let actual = Board2.curr_state grid in
+  assert_equal expected actual ~msg:name
+
+let curr_state_tests =
+  "curr_state"
+  >::: [
+         curr_state_test "full grid with no potential moves"
+           [|
+             [| 2; 4; 8; 16 |];
+             [| 4; 2; 4; 8 |];
+             [| 8; 16; 2; 4 |];
+             [| 16; 4; 8; 2 |];
+           |]
+           "LOST";
+         curr_state_test "full grid with a potential moves"
+           [|
+             [| 2; 4; 8; 16 |];
+             [| 4; 2; 2; 8 |];
+             [| 8; 16; 2; 4 |];
+             [| 16; 4; 8; 2 |];
+           |]
+           "GAME NOT OVER";
+         curr_state_test "grid with empty tiles and no 2048 tile"
+           [|
+             [| 2; 4; 8; 16 |];
+             [| 4; 2; 2; -1 |];
+             [| 8; 16; 2; 4 |];
+             [| 16; -1; 8; 2 |];
+           |]
+           "GAME NOT OVER";
+         curr_state_test "2048 tile with empty tiles"
+           [|
+             [| 2; 2; 2; -1 |];
+             [| 2; 2048; 2; 2 |];
+             [| 2; -1; 2; 2 |];
+             [| 2; 2; 2; -1 |];
+           |]
+           "WON";
+         curr_state_test "2048 tile and full grid"
+           [|
+             [| 2; 2; 2; 2 |];
+             [| 2; 2048; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+           |]
+           "WON";
+       ]
+
+let all_board_tests =
   "board tests"
+  >::: [ tests; find_empty_tests; invalid_input_tests; basic_undo_tests ]
+
+let all_board2_tests =
+  "board2 tests"
   >::: [
          turn_tests;
          compress_tests;
@@ -797,15 +852,16 @@ let all_board2_tests =
          right_tests;
          down_tests;
          reverse_tests;
+         curr_state_tests;
        ]
+
+let all_board_tests =
+  "board tests"
+  >::: [ tests; find_empty_tests; invalid_input_tests; basic_undo_tests ]
 
 let _ =
   Random.self_init ();
-  run_test_tt_main tests;
-  run_test_tt_main find_empty_tests;
-  run_test_tt_main invalid_input_tests;
-  run_test_tt_main grid_to_str_tests;
-  run_test_tt_main basic_undo_tests;
+  run_test_tt_main all_board_tests;
   run_test_tt_main all_board2_tests;
   run_test_tt_main
     ("Slider Qcheck" >::: QCheck_runner.to_ounit2_test_list qtests);

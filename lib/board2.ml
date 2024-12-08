@@ -1,3 +1,16 @@
+(** AF: A value of type [grid] represents the state of a 2048 game board. The
+    game board is a two-dimensional array of tiles, where each tile is either
+    [Empty] or [Number n] representing a tile on the board with a value n.
+    Conceptually, [grid.(i).(j)] corresponds to the cell at row i and column j
+    on the 2048 board.
+
+    RI:
+    - [grid] must form a proper square: it must have at least one row, and the
+      number of rows must equal the number of columns.
+    - The board must be 4x4.
+    - For any [Number n] tile, n must be a positive integer power of 2 (e.g., 2,
+      4, 8, 16, ...).
+    - Any number of tiles (including zero) may be [Empty]. *)
 type tile =
   | Empty
   | Number of int

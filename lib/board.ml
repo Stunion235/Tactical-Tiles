@@ -1,3 +1,16 @@
+(** AF: The value of type [grid] (a [tile array array]) represents a
+    two-dimensional board composed of tiles for or a sliding puzzle. Each tile
+    is either [Empty] or [Number n] for some integer [n]. The array-of-arrays
+    structure, [grid], maps each board coordinate (i, j) to a tile.
+    Conceptually, [grid.(i).(j)] is the tile at row [i] and column [j].
+
+    RI:
+    - [grid] must have at least one row and one column (i.e., Array.length grid
+      > 0 and Array.length grid.(0) > 0).
+    - All rows in [grid] must have the same length, ensuring a proper
+      rectangular shape.
+    - In a valid puzzle configuration, there should be exactly one [Empty] tile.
+    - For [Number n], the integer [n] should be non-negative. *)
 type tile =
   | Empty
   | Number of int
