@@ -40,8 +40,7 @@ let compress board =
       if board.(row).(col) = Empty then empty_pos := !empty_pos + 1
       else if !empty_pos <> 0 then (
         board.(row).(col - !empty_pos) <- board.(row).(col);
-        board.(row).(col) <- Empty;
-        empty_pos := 1)
+        board.(row).(col) <- Empty)
     done
   done;
   board

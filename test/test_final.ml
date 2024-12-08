@@ -16,6 +16,7 @@ let solve board shuffle_moves =
     ignore (Board.move_tile board inverse_move)
   done
 
+(*Slider tests*)
 let tests =
   "misc tests"
   >::: [
@@ -335,6 +336,16 @@ let invalid_input_tests =
            false;
        ]
 
+(*2048 tests*)
+let intarrayarray_to_string x =
+  let acc = ref "" in
+  Array.iter
+    (fun r ->
+      acc := !acc ^ "\n";
+      Array.iter (fun c -> acc := !acc ^ string_of_int c ^ " ") r)
+    x;
+  !acc
+
 let qtests2 =
   [
     QCheck.Test.make ~name:"make_board contains exactly two 2s" QCheck.unit
@@ -369,7 +380,7 @@ let make_turn_test name input expected =
   name >:: fun _ ->
   let grid = Board2.of_intarrayarray input in
   let actual = Board2.to_intarrayarray (Board2.turn grid) in
-  assert_equal expected actual ~msg:name
+  assert_equal expected actual ~msg:name ~printer:intarrayarray_to_string
 
 let turn_tests =
   "find empty tests"
@@ -419,7 +430,7 @@ let make_compress_test name input expected =
   name >:: fun _ ->
   let grid = Board2.of_intarrayarray input in
   let actual = Board2.to_intarrayarray (Board2.compress grid) in
-  assert_equal expected actual ~msg:name
+  assert_equal expected actual ~msg:name ~printer:intarrayarray_to_string
 
 let compress_tests =
   "find empty tests"
@@ -469,7 +480,7 @@ let make_merge_test name input expected =
   name >:: fun _ ->
   let grid = Board2.of_intarrayarray input in
   let actual = Board2.to_intarrayarray (Board2.merge grid) in
-  assert_equal expected actual ~msg:name
+  assert_equal expected actual ~msg:name ~printer:intarrayarray_to_string
 
 let merge_tests =
   "merge rows"
@@ -515,11 +526,61 @@ let merge_tests =
            |];
        ]
 
+let make_reverse_test name input expected =
+  name >:: fun _ ->
+  let grid = Board2.of_intarrayarray input in
+  let actual = Board2.to_intarrayarray (Board2.reverse grid) in
+  assert_equal expected actual ~msg:name
+
+let reverse_tests =
+  "reverse rows"
+  >::: [
+         make_reverse_test "one value in grid"
+           [|
+             [| 2; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+         make_reverse_test "2 values reversed"
+           [|
+             [| -1; -1; -1; -1 |];
+             [| -1; 2; -1; 2 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; -1 |];
+             [| 2; -1; 2; -1 |];
+             [| -1; -1; -1; -1 |];
+             [| -1; -1; -1; -1 |];
+           |];
+         make_reverse_test "full row"
+           [|
+             [| -1; -1; -1; -1 |];
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+             [| -1; -1; -1; -1 |];
+           |]
+           [|
+             [| -1; -1; -1; -1 |];
+             [| 2; 2; 2; 2 |];
+             [| 2; 2; 2; 2 |];
+             [| -1; -1; -1; -1 |];
+           |];
+       ]
+
 let move_left_test name input expected =
   name >:: fun _ ->
   let grid = Board2.of_intarrayarray input in
   let actual = Board2.to_intarrayarray (Board2.move_left grid) in
-  assert_equal expected actual ~msg:name
+  assert_equal expected actual ~msg:name ~printer:intarrayarray_to_string
 
 let left_tests =
   "move left"
@@ -569,7 +630,7 @@ let move_up_test name input expected =
   name >:: fun _ ->
   let grid = Board2.of_intarrayarray input in
   let actual = Board2.to_intarrayarray (Board2.move_up grid) in
-  assert_equal expected actual ~msg:name
+  assert_equal expected actual ~msg:name ~printer:intarrayarray_to_string
 
 let up_tests =
   "move up"
@@ -619,12 +680,12 @@ let move_right_test name input expected =
   name >:: fun _ ->
   let grid = Board2.of_intarrayarray input in
   let actual = Board2.to_intarrayarray (Board2.move_right grid) in
-  assert_equal expected actual ~msg:name
+  assert_equal expected actual ~msg:name ~printer:intarrayarray_to_string
 
 let right_tests =
   "move right"
   >::: [
-         move_up_test "one value in grid"
+         move_right_test "one value in grid"
            [|
              [| 2; -1; -1; -1 |];
              [| -1; -1; -1; -1 |];
@@ -637,7 +698,7 @@ let right_tests =
              [| -1; -1; -1; -1 |];
              [| -1; -1; -1; -1 |];
            |];
-         move_up_test "3 values moved right"
+         move_right_test "3 values moved right"
            [|
              [| 2; 2; -1; -1 |];
              [| -1; -1; -1; -1 |];
@@ -650,7 +711,7 @@ let right_tests =
              [| -1; -1; -1; 2 |];
              [| -1; -1; -1; -1 |];
            |];
-         move_up_test "board filled"
+         move_right_test "board filled"
            [|
              [| 2; 2; 2; 2 |];
              [| 2; 2; 2; 2 |];
@@ -669,12 +730,12 @@ let move_down_test name input expected =
   name >:: fun _ ->
   let grid = Board2.of_intarrayarray input in
   let actual = Board2.to_intarrayarray (Board2.move_down grid) in
-  assert_equal expected actual ~msg:name
+  assert_equal expected actual ~msg:name ~printer:intarrayarray_to_string
 
 let down_tests =
   "move down"
   >::: [
-         move_up_test "one value in grid"
+         move_down_test "one value in grid"
            [|
              [| 2; -1; -1; -1 |];
              [| -1; -1; -1; -1 |];
@@ -687,7 +748,7 @@ let down_tests =
              [| -1; -1; -1; -1 |];
              [| 2; -1; -1; -1 |];
            |];
-         move_up_test "3 values moved down"
+         move_down_test "3 values moved down"
            [|
              [| 2; 2; -1; -1 |];
              [| -1; -1; -1; -1 |];
@@ -700,7 +761,7 @@ let down_tests =
              [| -1; -1; -1; -1 |];
              [| 4; 2; -1; -1 |];
            |];
-         move_up_test "board filled"
+         move_down_test "board filled"
            [|
              [| 2; 2; 2; 2 |];
              [| 2; 2; 2; 2 |];
@@ -717,7 +778,16 @@ let down_tests =
 
 let all_board2_tests =
   "board tests"
-  >::: [ turn_tests; compress_tests; merge_tests; left_tests; up_tests ]
+  >::: [
+         turn_tests;
+         compress_tests;
+         merge_tests;
+         left_tests;
+         up_tests;
+         right_tests;
+         down_tests;
+         reverse_tests;
+       ]
 
 let _ =
   Random.self_init ();
@@ -726,6 +796,6 @@ let _ =
   run_test_tt_main invalid_input_tests;
   run_test_tt_main basic_undo_tests;
   run_test_tt_main all_board2_tests;
-  run_test_tt_main ("Qcheck tests" >::: QCheck_runner.to_ounit2_test_list qtests);
   run_test_tt_main
-    ("Qcheck tests" >::: QCheck_runner.to_ounit2_test_list qtests2)
+    ("Slider Qcheck" >::: QCheck_runner.to_ounit2_test_list qtests);
+  run_test_tt_main ("2048 Qcheck" >::: QCheck_runner.to_ounit2_test_list qtests2)

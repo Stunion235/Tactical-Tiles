@@ -6,6 +6,7 @@ val add_new : grid -> grid
 val turn : grid -> grid
 val merge : grid -> grid
 val compress : grid -> grid
+val reverse : grid -> grid
 val move_up : grid -> grid
 val move_down : grid -> grid
 val move_right : grid -> grid
