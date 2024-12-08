@@ -16,6 +16,15 @@ let solve board shuffle_moves =
     ignore (Board.move_tile board inverse_move)
   done
 
+let intarrayarray_to_string x =
+  let acc = ref "" in
+  Array.iter
+    (fun r ->
+      acc := !acc ^ "\n";
+      Array.iter (fun c -> acc := !acc ^ string_of_int c ^ " ") r)
+    x;
+  !acc
+
 (*Slider tests*)
 let tests =
   "misc tests"
@@ -99,7 +108,8 @@ let qtests =
              = 1
         in
         if not passed then (
-          Ui.print_grid board;
+          board |> Board.to_intarrayarray |> intarrayarray_to_string
+          |> print_endline;
           List.iter print_int board_as_list);
         passed);
     QCheck2.Test.make ~count:50
@@ -123,7 +133,8 @@ let qtests =
           with Failure _ -> false
         in
         if not passed then (
-          Ui.print_grid board;
+          board |> Board.to_intarrayarray |> intarrayarray_to_string
+          |> print_endline;
           List.iter print_int board_as_list);
         passed);
     QCheck2.Test.make ~count:20
@@ -140,7 +151,9 @@ let qtests =
         solve board shuffle_moves;
         let final = Board.to_intlistlist board in
         let passed = initial = final in
-        if not passed then Ui.print_grid board;
+        if not passed then
+          board |> Board.to_intarrayarray |> intarrayarray_to_string
+          |> print_endline;
         passed);
     QCheck2.Test.make ~count:8
       ~name:
@@ -150,7 +163,9 @@ let qtests =
       (fun x ->
         let board = Board.initialize_board (List.nth x 0) in
         let passed = not (Board.check_correct_board board) in
-        if not passed then Ui.print_grid board;
+        if not passed then
+          board |> Board.to_intarrayarray |> intarrayarray_to_string
+          |> print_endline;
         passed);
     QCheck2.Test.make ~count:8
       ~name:
@@ -162,7 +177,9 @@ let qtests =
         let board = Board.initialize_board (List.nth x 0) in
         Board.fill_board board;
         let passed = Board.check_correct_board board in
-        if not passed then Ui.print_grid board;
+        if not passed then
+          board |> Board.to_intarrayarray |> intarrayarray_to_string
+          |> print_endline;
         passed);
     QCheck2.Test.make ~count:8
       ~name:
@@ -178,7 +195,9 @@ let qtests =
         (*1st move W is never valid on unshuffled board*);
         let final = Board.to_intlistlist board in
         let passed = initial = final in
-        if not passed then Ui.print_grid board;
+        if not passed then
+          board |> Board.to_intarrayarray |> intarrayarray_to_string
+          |> print_endline;
         passed);
     QCheck2.Test.make ~count:8
       ~name:"A valid move on a new board takes it out of its initial state."
@@ -192,7 +211,9 @@ let qtests =
         (*1st move S is always valid on unshuffled board*);
         let final = Board.to_intlistlist board in
         let passed = initial <> final in
-        if not passed then Ui.print_grid board;
+        if not passed then
+          board |> Board.to_intarrayarray |> intarrayarray_to_string
+          |> print_endline;
         passed);
     QCheck2.Test.make ~count:8 ~name:"Simulation restores original board"
       (QCheck2.Gen.pair
@@ -203,7 +224,7 @@ let qtests =
         Board.fill_board board;
         let init_board = Board.copy_board board in
         let moves = Board.shuffle board difficulty in
-        Ui.simulate_solution ~delay:0.0 ~debug:true board moves;
+        solve board moves;
         Board.to_intarrayarray board = Board.to_intarrayarray init_board);
     QCheck2.Test.make ~count:8 ~name:"Simulation uses all shuffle moves"
       (QCheck2.Gen.pair
@@ -214,7 +235,7 @@ let qtests =
         Board.fill_board board;
         let moves = Board.shuffle board difficulty in
         let move_count_before = Stack.length moves in
-        Ui.simulate_solution ~delay:0.0 ~debug:true board moves;
+        solve board moves;
         (* After simulation, the stack should be empty *)
         Stack.length moves = 0 && move_count_before > 0);
     QCheck2.Test.make ~count:8
@@ -232,7 +253,7 @@ let qtests =
           let direction = List.nth [ "w"; "a"; "s"; "d" ] (Random.int 4) in
           ignore (Board.move_tile board direction)
         done;
-        Ui.simulate_solution ~delay:0.0 ~debug:true init_board moves;
+        solve init_board moves;
         let solved_board = Board.initialize_board size in
         Board.fill_board solved_board;
         Board.to_intarrayarray init_board = Board.to_intarrayarray solved_board);
@@ -280,7 +301,9 @@ let qtests =
         done;
         let final = Board.to_intlistlist board in
         let passed = initial = final in
-        if not passed then Ui.print_grid board;
+        if not passed then
+          board |> Board.to_intarrayarray |> intarrayarray_to_string
+          |> print_endline;
         passed);
     QCheck2.Test.make ~count:15
       ~name:
@@ -298,7 +321,9 @@ let qtests =
         done;
         let final = Board.to_intlistlist board in
         let passed = initial = final in
-        if not passed then Ui.print_grid board;
+        if not passed then
+          board |> Board.to_intarrayarray |> intarrayarray_to_string
+          |> print_endline;
         passed);
     QCheck2.Test.make ~count:8
       ~name:
@@ -318,7 +343,9 @@ let qtests =
         ignore (Board.undo board test_moves);
         let final = Board.to_intlistlist board in
         let passed = initial <> final in
-        if not passed then Ui.print_grid board;
+        if not passed then
+          board |> Board.to_intarrayarray |> intarrayarray_to_string
+          |> print_endline;
         passed);
   ]
 
@@ -337,15 +364,6 @@ let invalid_input_tests =
        ]
 
 (*2048 tests*)
-let intarrayarray_to_string x =
-  let acc = ref "" in
-  Array.iter
-    (fun r ->
-      acc := !acc ^ "\n";
-      Array.iter (fun c -> acc := !acc ^ string_of_int c ^ " ") r)
-    x;
-  !acc
-
 let qtests2 =
   [
     QCheck.Test.make ~name:"make_board contains exactly two 2s" QCheck.unit
@@ -851,14 +869,7 @@ let all_board_tests =
 
 let _ =
   Random.self_init ();
-<<<<<<< Updated upstream
   run_test_tt_main all_board_tests;
-=======
-  run_test_tt_main tests;
-  run_test_tt_main find_empty_tests;
-  run_test_tt_main invalid_input_tests;
-  run_test_tt_main basic_undo_tests;
->>>>>>> Stashed changes
   run_test_tt_main all_board2_tests;
   run_test_tt_main
     ("Slider Qcheck" >::: QCheck_runner.to_ounit2_test_list qtests);

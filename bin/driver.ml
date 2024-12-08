@@ -1,3 +1,5 @@
+open Final
+
 let rec ask_size () =
   print_endline "What board size would you like? Give an integer >1.";
   try

@@ -1,9 +1,9 @@
-open Board
+open Final.Board
 
 (**For best results, g has at least one row and one column and is rectangular
    (all rows have the same number of columns)*)
 let grid_to_string g =
-  let ints = Board.to_intarrayarray g in
+  let ints = to_intarrayarray g in
   let h = Array.length ints in
   let w = Array.length ints.(0) in
   let acc = ref "" in
@@ -52,7 +52,7 @@ let ansi_style_from_tile_and_size t s =
     else white)
 
 let print_grid_styled g =
-  let ints = Board.to_intarrayarray g in
+  let ints = to_intarrayarray g in
   let h = Array.length ints in
   let w = Array.length ints.(0) in
   print_char '*';
