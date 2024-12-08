@@ -76,7 +76,39 @@ let move_left board = compress (merge (compress board))
 let move_up board = turn (move_left (turn board))
 let move_right board = reverse (move_left (reverse board))
 let move_down board = turn (move_right (turn board))
-let curr_state board = failwith ""
+
+let get_value board (i, j) =
+  match board.(i).(j) with
+  | Empty -> -1
+  | Number x -> x
+
+let curr_state board =
+  let won = ref false in
+  let empty = ref false in
+  for i = 0 to 3 do
+    for j = 0 to 3 do
+      if get_value board (i, j) = 2048 then won := true
+      else if get_value board (i, j) = -1 then empty := true
+    done
+  done;
+  if (not !empty) && not !won then
+    for i = 0 to 2 do
+      for j = 0 to 2 do
+        if
+          get_value board (i, j) = get_value board (i + 1, j)
+          || get_value board (i, j) = get_value board (i, j + 1)
+        then empty := true
+      done
+    done;
+  for i = 0 to 2 do
+    if get_value board (i, 3) = get_value board (i + 1, 3) then empty := true
+  done;
+  for j = 0 to 2 do
+    if get_value board (3, j) = get_value board (3, j + 1) then empty := true
+  done;
+  if !won = true then "WON"
+  else if !empty = true then "GAME NOT OVER"
+  else "LOST"
 
 let to_intarrayarray (g : grid) =
   Array.map
