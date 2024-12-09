@@ -16,6 +16,7 @@ let solve board shuffle_moves =
     ignore (Board.move_tile board inverse_move)
   done
 
+<<<<<<< Updated upstream
 let intarrayarray_to_string x =
   let acc = ref "" in
   Array.iter
@@ -25,6 +26,8 @@ let intarrayarray_to_string x =
     x;
   !acc
 
+=======
+>>>>>>> Stashed changes
 (*Slider tests*)
 let tests =
   "misc tests"
@@ -869,7 +872,14 @@ let all_board_tests =
 
 let _ =
   Random.self_init ();
+<<<<<<< Updated upstream
   run_test_tt_main all_board_tests;
+=======
+  run_test_tt_main tests;
+  run_test_tt_main find_empty_tests;
+  run_test_tt_main invalid_input_tests;
+  run_test_tt_main basic_undo_tests;
+>>>>>>> Stashed changes
   run_test_tt_main all_board2_tests;
   run_test_tt_main
     ("Slider Qcheck" >::: QCheck_runner.to_ounit2_test_list qtests);
