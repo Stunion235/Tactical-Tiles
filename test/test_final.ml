@@ -394,6 +394,16 @@ let qtests2 =
         !twos_count = 2 && !valid);
   ]
 
+(*Read 4 lines from testarrays.csv as an array array to avoid hardcoding
+  200+lines of them*)
+let testarrays =
+  Array.of_list
+    (List.map
+       (fun r -> Array.of_list (List.map int_of_string r))
+       (Csv.load "../data/testarrays.csv"))
+
+let read_2048_test n = Array.sub testarrays (n * 4) 4
+
 let make_turn_test name input expected =
   name >:: fun _ ->
   let grid = Board2.of_intarrayarray input in
@@ -401,47 +411,12 @@ let make_turn_test name input expected =
   assert_equal expected actual ~msg:name ~printer:intarrayarray_to_string
 
 let turn_tests =
-  "find empty tests"
+  "turn tests"
   >::: [
-         make_turn_test "one value in grid"
-           [|
-             [| -1; -1; -1; 2 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| 2; -1; -1; -1 |];
-           |];
-         make_turn_test "2 values turned"
-           [|
-             [| -1; 2; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; 2 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; -1 |];
-             [| 2; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; 2; -1 |];
-           |];
-         make_turn_test "doesn't change"
-           [|
-             [| -1; -1; -1; -1 |];
-             [| -1; 2; 2; -1 |];
-             [| -1; 2; 2; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; -1 |];
-             [| -1; 2; 2; -1 |];
-             [| -1; 2; 2; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
+         make_turn_test "one value in grid" (read_2048_test 0)
+           (read_2048_test 1);
+         make_turn_test "2 values turned" (read_2048_test 2) (read_2048_test 3);
+         make_turn_test "doesn't change" (read_2048_test 4) (read_2048_test 5);
        ]
 
 let make_compress_test name input expected =
@@ -451,47 +426,14 @@ let make_compress_test name input expected =
   assert_equal expected actual ~msg:name ~printer:intarrayarray_to_string
 
 let compress_tests =
-  "find empty tests"
+  "compress tests"
   >::: [
-         make_compress_test "one value in grid"
-           [|
-             [| -1; -1; -1; 2 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| 2; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
+         make_compress_test "one value in grid" (read_2048_test 6)
+           (read_2048_test 7);
          make_compress_test "2 values compressed, space in between"
-           [|
-             [| -1; 2; -1; 2 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| 2; 2; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
-         make_compress_test "middle values compressed"
-           [|
-             [| -1; -1; -1; -1 |];
-             [| -1; 2; 2; -1 |];
-             [| -1; 2; 2; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; -1 |];
-             [| 2; 2; -1; -1 |];
-             [| 2; 2; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
+           (read_2048_test 8) (read_2048_test 9);
+         make_compress_test "middle values compressed" (read_2048_test 10)
+           (read_2048_test 11);
        ]
 
 let make_merge_test name input expected =
@@ -503,45 +445,11 @@ let make_merge_test name input expected =
 let merge_tests =
   "merge rows"
   >::: [
-         make_merge_test "one value in grid"
-           [|
-             [| 2; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| 2; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
-         make_merge_test "2 values compressed"
-           [|
-             [| 2; 2; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| 4; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
-         make_merge_test "full row"
-           [|
-             [| -1; -1; -1; -1 |];
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; -1 |];
-             [| 4; -1; 4; -1 |];
-             [| 4; -1; 4; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
+         make_merge_test "one value in grid" (read_2048_test 12)
+           (read_2048_test 13);
+         make_merge_test "2 values compressed" (read_2048_test 14)
+           (read_2048_test 15);
+         make_merge_test "full row" (read_2048_test 16) (read_2048_test 17);
        ]
 
 let make_reverse_test name input expected =
@@ -553,45 +461,11 @@ let make_reverse_test name input expected =
 let reverse_tests =
   "reverse rows"
   >::: [
-         make_reverse_test "one value in grid"
-           [|
-             [| 2; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; 2 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
-         make_reverse_test "2 values reversed"
-           [|
-             [| -1; -1; -1; -1 |];
-             [| -1; 2; -1; 2 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; -1 |];
-             [| 2; -1; 2; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
-         make_reverse_test "full row"
-           [|
-             [| -1; -1; -1; -1 |];
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; -1 |];
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-             [| -1; -1; -1; -1 |];
-           |];
+         make_reverse_test "one value in grid" (read_2048_test 18)
+           (read_2048_test 19);
+         make_reverse_test "2 values reversed" (read_2048_test 20)
+           (read_2048_test 21);
+         make_reverse_test "full row" (read_2048_test 22) (read_2048_test 23);
        ]
 
 let move_left_test name input expected =
@@ -603,45 +477,11 @@ let move_left_test name input expected =
 let left_tests =
   "move left"
   >::: [
-         move_left_test "one value in grid"
-           [|
-             [| -1; -1; -1; 2 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| 2; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
-         move_left_test "3 values moved left"
-           [|
-             [| 2; 2; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; 2 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| 4; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| 2; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
-         move_left_test "board filled"
-           [|
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-           |]
-           [|
-             [| 4; 4; -1; -1 |];
-             [| 4; 4; -1; -1 |];
-             [| 4; 4; -1; -1 |];
-             [| 4; 4; -1; -1 |];
-           |];
+         move_left_test "one value in grid" (read_2048_test 24)
+           (read_2048_test 25);
+         move_left_test "3 values moved left" (read_2048_test 26)
+           (read_2048_test 27);
+         move_left_test "board filled" (read_2048_test 28) (read_2048_test 29);
        ]
 
 let move_up_test name input expected =
@@ -653,45 +493,11 @@ let move_up_test name input expected =
 let up_tests =
   "move up"
   >::: [
-         move_up_test "one value in grid"
-           [|
-             [| -1; -1; -1; 2 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; 2 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
-         move_up_test "3 values moved up"
-           [|
-             [| 2; 2; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| 2; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| 4; 2; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
-         move_up_test "board filled"
-           [|
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-           |]
-           [|
-             [| 4; 4; 4; 4 |];
-             [| 4; 4; 4; 4 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
+         move_up_test "one value in grid" (read_2048_test 30)
+           (read_2048_test 31);
+         move_up_test "3 values moved up" (read_2048_test 32)
+           (read_2048_test 33);
+         move_up_test "board filled" (read_2048_test 34) (read_2048_test 35);
        ]
 
 let move_right_test name input expected =
@@ -703,45 +509,11 @@ let move_right_test name input expected =
 let right_tests =
   "move right"
   >::: [
-         move_right_test "one value in grid"
-           [|
-             [| 2; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; 2 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |];
-         move_right_test "3 values moved right"
-           [|
-             [| 2; 2; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| 2; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; 4 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; 2 |];
-             [| -1; -1; -1; -1 |];
-           |];
-         move_right_test "board filled"
-           [|
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-           |]
-           [|
-             [| -1; -1; 4; 4 |];
-             [| -1; -1; 4; 4 |];
-             [| -1; -1; 4; 4 |];
-             [| -1; -1; 4; 4 |];
-           |];
+         move_right_test "one value in grid" (read_2048_test 36)
+           (read_2048_test 37);
+         move_right_test "3 values moved right" (read_2048_test 38)
+           (read_2048_test 39);
+         move_right_test "board filled" (read_2048_test 40) (read_2048_test 41);
        ]
 
 let move_down_test name input expected =
@@ -753,45 +525,11 @@ let move_down_test name input expected =
 let down_tests =
   "move down"
   >::: [
-         move_down_test "one value in grid"
-           [|
-             [| 2; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| 2; -1; -1; -1 |];
-           |];
-         move_down_test "3 values moved down"
-           [|
-             [| 2; 2; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| 2; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-           |]
-           [|
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| 4; 2; -1; -1 |];
-           |];
-         move_down_test "board filled"
-           [|
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-           |]
-           [|
-             [| -1; -1; -1; -1 |];
-             [| -1; -1; -1; -1 |];
-             [| 4; 4; 4; 4 |];
-             [| 4; 4; 4; 4 |];
-           |];
+         move_down_test "one value in grid" (read_2048_test 42)
+           (read_2048_test 43);
+         move_down_test "3 values moved down" (read_2048_test 44)
+           (read_2048_test 45);
+         move_down_test "board filled" (read_2048_test 46) (read_2048_test 47);
        ]
 
 let curr_state_test name input expected =
@@ -803,46 +541,14 @@ let curr_state_test name input expected =
 let curr_state_tests =
   "curr_state"
   >::: [
-         curr_state_test "full grid with no potential moves"
-           [|
-             [| 2; 4; 8; 16 |];
-             [| 4; 2; 4; 8 |];
-             [| 8; 16; 2; 4 |];
-             [| 16; 4; 8; 2 |];
-           |]
+         curr_state_test "full grid with no potential moves" (read_2048_test 48)
            "LOST";
-         curr_state_test "full grid with a potential moves"
-           [|
-             [| 2; 4; 8; 16 |];
-             [| 4; 2; 2; 8 |];
-             [| 8; 16; 2; 4 |];
-             [| 16; 4; 8; 2 |];
-           |]
+         curr_state_test "full grid with a potential moves" (read_2048_test 49)
            "GAME NOT OVER";
          curr_state_test "grid with empty tiles and no 2048 tile"
-           [|
-             [| 2; 4; 8; 16 |];
-             [| 4; 2; 2; -1 |];
-             [| 8; 16; 2; 4 |];
-             [| 16; -1; 8; 2 |];
-           |]
-           "GAME NOT OVER";
-         curr_state_test "2048 tile with empty tiles"
-           [|
-             [| 2; 2; 2; -1 |];
-             [| 2; 2048; 2; 2 |];
-             [| 2; -1; 2; 2 |];
-             [| 2; 2; 2; -1 |];
-           |]
-           "WON";
-         curr_state_test "2048 tile and full grid"
-           [|
-             [| 2; 2; 2; 2 |];
-             [| 2; 2048; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-             [| 2; 2; 2; 2 |];
-           |]
-           "WON";
+           (read_2048_test 50) "GAME NOT OVER";
+         curr_state_test "2048 tile with empty tiles" (read_2048_test 51) "WON";
+         curr_state_test "2048 tile and full grid" (read_2048_test 52) "WON";
        ]
 
 let all_board_tests =
