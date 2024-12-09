@@ -82,7 +82,7 @@ let opposite_move = function
   | "A" | "a" -> "D"
   | "D" | "d" -> "A"
   | "" -> ""
-  | _ -> failwith "Invalid move"
+  | _ -> failwith "Invalid move" [@coverage off]
 
 let move_tile grid direction =
   let ey, ex = find_empty grid in
@@ -115,6 +115,7 @@ let move_tile grid direction =
   | _ ->
       print_endline "This is an invalid input. Type w, a, s, or d.";
       false
+[@@coverage off]
 
 let to_intlistlist (g : grid) =
   to_intarrayarray g |> Array.map Array.to_list |> Array.to_list
@@ -154,6 +155,7 @@ let shuffle board difficulty =
   | _ ->
       print_endline "Enter a valid difficulty";
       shuffle_moves
+[@@coverage off]
 
 let check_correct_board board =
   let size = Array.length board in

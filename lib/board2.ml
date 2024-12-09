@@ -49,15 +49,26 @@ let turn board =
 let compress board direction =
   let compress_row row start_index step =
     let next_pos = ref start_index in
-    for i = start_index to start_index + (3 * step) do
-      match row.(i) with
-      | Empty -> ()
-      | _ ->
-          if !next_pos <> i then (
-            row.(!next_pos) <- row.(i);
-            row.(i) <- Empty);
-          next_pos := !next_pos + step
-    done
+    if step > 0 then
+      for i = start_index to start_index + (3 * step) do
+        match row.(i) with
+        | Empty -> ()
+        | _ ->
+            if !next_pos <> i then (
+              row.(!next_pos) <- row.(i);
+              row.(i) <- Empty);
+            next_pos := !next_pos + step
+      done
+    else
+      for i = start_index downto start_index + (3 * step) do
+        match row.(i) with
+        | Empty -> ()
+        | _ ->
+            if !next_pos <> i then (
+              row.(!next_pos) <- row.(i);
+              row.(i) <- Empty);
+            next_pos := !next_pos + step
+      done
   in
 
   match direction with
@@ -99,21 +110,35 @@ let compress board direction =
         done
       done;
       board
-  | _ -> failwith "Invalid direction. Must be 'left', 'right', 'up', or 'down'"
+  | _ ->
+      failwith "Invalid direction. Must be 'left', 'right', 'up', or 'down'"
+      [@coverage off]
 
 let merge board direction =
   let merge_row row start_index step =
     let skip_next = ref false in
-    for i = start_index to start_index + (2 * step) do
-      if !skip_next then skip_next := false
-      else
-        match (row.(i), row.(i + step)) with
-        | Number x, Number y when x = y ->
-            row.(i) <- Number (2 * x);
-            row.(i + step) <- Empty;
-            skip_next := true
-        | _ -> ()
-    done
+    if step > 0 then
+      for i = start_index to start_index + (2 * step) do
+        if !skip_next then skip_next := false
+        else
+          match (row.(i), row.(i + step)) with
+          | Number x, Number y when x = y ->
+              row.(i) <- Number (2 * x);
+              row.(i + step) <- Empty;
+              skip_next := true
+          | _ -> ()
+      done
+    else
+      for i = start_index downto start_index + (2 * step) do
+        if !skip_next then skip_next := false
+        else
+          match (row.(i), row.(i + step)) with
+          | Number x, Number y when x = y ->
+              row.(i) <- Number (2 * x);
+              row.(i + step) <- Empty;
+              skip_next := true
+          | _ -> ()
+      done
   in
 
   match direction with
@@ -123,7 +148,7 @@ let merge board direction =
       done;
       board
   | "right" ->
-      for row = 3 downto 1 do
+      for row = 0 to 3 do
         merge_row board.(row) 3 (-1)
       done;
       board
@@ -157,17 +182,9 @@ let merge board direction =
         done
       done;
       board
-  | _ -> failwith "Invalid direction. Must be 'left', 'right', 'up', or 'down'"
-
-let reverse board =
-  let new_board = make_empty_board () in
-  for row = 0 to 3 do
-    for col = 0 to 3 do
-      let currTile = board.(row).(col) in
-      new_board.(row).(3 - col) <- currTile
-    done
-  done;
-  new_board
+  | _ ->
+      failwith "Invalid direction. Must be 'left', 'right', 'up', or 'down'"
+      [@coverage off]
 
 let move_left board = compress (merge (compress board "left") "left") "left"
 let move_up board = compress (merge (compress board "up") "up") "up"
@@ -203,18 +220,18 @@ let curr_state board =
   for j = 0 to 2 do
     if get_value board (3, j) = get_value board (3, j + 1) then empty := true
   done;
-  if !won = true then "WON"
-  else if !empty = true then "GAME NOT OVER"
-  else "LOST"
+  if !won then "WON" else if !empty then "GAME NOT OVER" else "LOST"
 
-let make_move board = function
-  | "W" | "w" -> board |> move_up |> add_new
-  | "A" | "a" -> board |> move_left |> add_new
-  | "S" | "s" -> board |> move_down |> add_new
-  | "D" | "d" -> board |> move_right |> add_new
+let make_move board dir =
+  match String.lowercase_ascii dir with
+  | "w" -> board |> move_up |> add_new
+  | "a" -> board |> move_left |> add_new
+  | "s" -> board |> move_down |> add_new
+  | "d" -> board |> move_right |> add_new
   | _ ->
       print_endline "This is an invalid input. Type w, a, s, or d";
       board
+[@@coverage off]
 
 let to_intarrayarray (g : grid) =
   Array.map

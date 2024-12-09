@@ -366,8 +366,8 @@ let invalid_input_tests =
 (*2048 tests*)
 let qtests2 =
   [
-    QCheck.Test.make ~name:"make_board contains exactly two 2s" QCheck.unit
-      ~count:8 (fun () ->
+    QCheck2.Test.make ~name:"make_board contains exactly two 2s"
+      QCheck2.Gen.unit ~count:8 (fun () ->
         let board = Board2.make_board () in
         let int_list = Board2.to_intlistlist board in
         let twos_count = ref 0 in
@@ -392,6 +392,35 @@ let qtests2 =
           Printf.printf "Twos count: %d\n" !twos_count;
           Printf.printf "Valid: %b\n" !valid);
         !twos_count = 2 && !valid);
+    QCheck2.Test.make ~name:"Making any move adds a new tile"
+      (QCheck2.Gen.oneofl [ "w"; "a"; "s"; "d" ])
+      ~count:8
+      (fun move ->
+        let grid =
+          Board2.to_intarrayarray (Board2.make_move (Board2.make_board ()) move)
+        in
+        let passed =
+          Array.exists (fun r -> Array.exists (fun x -> x <> -1) r) grid
+        in
+        if not passed then print_endline (intarrayarray_to_string grid);
+        passed);
+    QCheck2.Test.make
+      ~name:
+        "Making any move adds a new tile, EVEN IF the original board was empty"
+      (QCheck2.Gen.oneofl [ "w"; "a"; "s"; "d" ])
+      ~count:8
+      (fun move ->
+        let grid =
+          Board2.to_intarrayarray
+            (Board2.make_move
+               (Array.make 4 [| -1; -1; -1; -1 |] |> Board2.of_intarrayarray)
+               move)
+        in
+        let passed =
+          Array.exists (fun r -> Array.exists (fun x -> x <> -1) r) grid
+        in
+        if not passed then print_endline (intarrayarray_to_string grid);
+        passed);
   ]
 
 (*Read 4 lines from testarrays.csv as an array array to avoid hardcoding
@@ -422,7 +451,7 @@ let turn_tests =
 let make_compress_test name input expected =
   name >:: fun _ ->
   let grid = Board2.of_intarrayarray input in
-  let actual = Board2.to_intarrayarray (Board2.compress grid) in
+  let actual = Board2.to_intarrayarray (Board2.compress grid "left") in
   assert_equal expected actual ~msg:name ~printer:intarrayarray_to_string
 
 let compress_tests =
@@ -439,7 +468,7 @@ let compress_tests =
 let make_merge_test name input expected =
   name >:: fun _ ->
   let grid = Board2.of_intarrayarray input in
-  let actual = Board2.to_intarrayarray (Board2.merge grid) in
+  let actual = Board2.to_intarrayarray (Board2.merge grid "left") in
   assert_equal expected actual ~msg:name ~printer:intarrayarray_to_string
 
 let merge_tests =
@@ -450,22 +479,6 @@ let merge_tests =
          make_merge_test "2 values compressed" (read_2048_test 14)
            (read_2048_test 15);
          make_merge_test "full row" (read_2048_test 16) (read_2048_test 17);
-       ]
-
-let make_reverse_test name input expected =
-  name >:: fun _ ->
-  let grid = Board2.of_intarrayarray input in
-  let actual = Board2.to_intarrayarray (Board2.reverse grid) in
-  assert_equal expected actual ~msg:name
-
-let reverse_tests =
-  "reverse rows"
-  >::: [
-         make_reverse_test "one value in grid" (read_2048_test 18)
-           (read_2048_test 19);
-         make_reverse_test "2 values reversed" (read_2048_test 20)
-           (read_2048_test 21);
-         make_reverse_test "full row" (read_2048_test 22) (read_2048_test 23);
        ]
 
 let move_left_test name input expected =
@@ -565,7 +578,6 @@ let all_board2_tests =
          up_tests;
          right_tests;
          down_tests;
-         reverse_tests;
          curr_state_tests;
        ]
 

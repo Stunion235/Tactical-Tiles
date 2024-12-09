@@ -14,13 +14,10 @@ val turn : grid -> grid
 (**Interchange the rows and columns of grid*)
 
 val merge : grid -> string -> grid
-(**Merge the cells in grid*)
+(**[merge g d] merges the tiles in g in direction d*)
 
 val compress : grid -> string -> grid
-(**Compress the grid*)
-
-val reverse : grid -> grid
-(**Reverse the content in each row in grid*)
+(**[compress g d] compresses the tiles in g in direction d*)
 
 val move_up : grid -> grid
 (**Update the grid after an "up" move*)
