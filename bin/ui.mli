@@ -5,6 +5,11 @@ val grid_to_string : Final.Board.grid -> string
 val print_grid : Final.Board.grid -> unit
 (**Print [grid_to_string].*)
 
+val grid_to_string_2048 : Final.Board2.grid -> string
+
+val print_grid_2048 : Final.Board2.grid -> unit
+(**Print [grid_to_string].*)
+
 val print_grid_styled : Final.Board.grid -> unit
 (**Print the grid but with colors corresponding to the row/col. Top row and left
    col red, 2nd row and 2nd col yellow, etc.*)

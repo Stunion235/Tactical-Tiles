@@ -90,3 +90,4 @@ let () =
           print_endline ("Mode `" ^ arg ^ "` is invalid. Pick a mode.");
           mode := ask_mode ()));
     Driver.main !mode)
+  else Driver.main_2048 ()

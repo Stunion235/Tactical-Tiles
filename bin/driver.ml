@@ -213,4 +213,18 @@ let main mode =
         unsolved := false)
   done
 
-let main_2048 = ANSITerminal.(print_string [ blue ] "Mode")
+let main_2048 () =
+  let board = Board2.make_board () in
+  Ui.print_grid_2048 board;
+  while Board2.curr_state board = "GAME NOT OVER" do
+    let user_input = input_line stdin in
+    let user_input = String.trim user_input in
+    if not (List.mem user_input [ "w"; "a"; "s"; "d" ]) then
+      print_endline "Invalid input! Please use w, a, s, or d."
+    else
+      let board = Board2.make_move board user_input in
+      Ui.print_grid_2048 board
+  done;
+  if Board2.curr_state board = "WON" then
+    print_endline "Congratulations you won!"
+  else if Board2.curr_state board = "LOST" then print_endline "You lost!"

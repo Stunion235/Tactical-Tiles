@@ -46,33 +46,118 @@ let turn board =
   done;
   new_board
 
-let compress board =
-  for row = 0 to 3 do
-    let empty_pos = ref 0 in
-    for col = 0 to 3 do
-      if board.(row).(col) = Empty then empty_pos := !empty_pos + 1
-      else if !empty_pos <> 0 then (
-        board.(row).(col - !empty_pos) <- board.(row).(col);
-        board.(row).(col) <- Empty)
+let compress board direction =
+  let compress_row row start_index step =
+    let next_pos = ref start_index in
+    for i = start_index to start_index + (3 * step) do
+      match row.(i) with
+      | Empty -> ()
+      | _ ->
+          if !next_pos <> i then (
+            row.(!next_pos) <- row.(i);
+            row.(i) <- Empty);
+          next_pos := !next_pos + step
     done
-  done;
-  board
+  in
 
-let merge board =
-  for row = 0 to 3 do
-    for col = 0 to 2 do
-      if board.(row).(col) = board.(row).(col + 1) && board.(row).(col) <> Empty
-      then (
-        let value = function
-          | Number x -> x
-          | Empty -> -1
-        in
-        board.(row).(col) <- Number (value board.(row).(col) * 2);
-        board.(row).(col + 1) <- Empty)
-      else ()
+  match direction with
+  | "left" ->
+      for row = 0 to 3 do
+        compress_row board.(row) 0 1
+      done;
+      board
+  | "right" ->
+      for row = 3 downto 0 do
+        compress_row board.(row) 3 (-1)
+      done;
+      board
+  | "up" ->
+      for col = 0 to 3 do
+        let next_pos = ref 0 in
+        for row = 0 to 3 do
+          match board.(row).(col) with
+          | Empty -> ()
+          | _ ->
+              if !next_pos <> row then (
+                board.(!next_pos).(col) <- board.(row).(col);
+                board.(row).(col) <- Empty);
+              incr next_pos
+        done
+      done;
+      board
+  | "down" ->
+      for col = 0 to 3 do
+        let next_pos = ref 3 in
+        for row = 3 downto 0 do
+          match board.(row).(col) with
+          | Empty -> ()
+          | _ ->
+              if !next_pos <> row then (
+                board.(!next_pos).(col) <- board.(row).(col);
+                board.(row).(col) <- Empty);
+              decr next_pos
+        done
+      done;
+      board
+  | _ -> failwith "Invalid direction. Must be 'left', 'right', 'up', or 'down'"
+
+let merge board direction =
+  let merge_row row start_index step =
+    let skip_next = ref false in
+    for i = start_index to start_index + (2 * step) do
+      if !skip_next then skip_next := false
+      else
+        match (row.(i), row.(i + step)) with
+        | Number x, Number y when x = y ->
+            row.(i) <- Number (2 * x);
+            row.(i + step) <- Empty;
+            skip_next := true
+        | _ -> ()
     done
-  done;
-  board
+  in
+
+  match direction with
+  | "left" ->
+      for row = 0 to 3 do
+        merge_row board.(row) 0 1
+      done;
+      board
+  | "right" ->
+      for row = 3 downto 1 do
+        merge_row board.(row) 3 (-1)
+      done;
+      board
+  | "up" ->
+      for col = 0 to 3 do
+        let skip_next = ref false in
+        for row = 0 to 2 do
+          if !skip_next then skip_next := false
+          else
+            match (board.(row).(col), board.(row + 1).(col)) with
+            | Number x, Number y when x = y ->
+                board.(row).(col) <- Number (2 * x);
+                board.(row + 1).(col) <- Empty;
+                skip_next := true
+            | _ -> ()
+        done
+      done;
+      board
+  | "down" ->
+      for col = 0 to 3 do
+        let skip_next = ref false in
+        for row = 3 downto 1 do
+          if !skip_next then skip_next := false
+          else
+            match (board.(row).(col), board.(row - 1).(col)) with
+            | Number x, Number y when x = y ->
+                board.(row).(col) <- Number (2 * x);
+                board.(row - 1).(col) <- Empty;
+                skip_next := true
+            | _ -> ()
+        done
+      done;
+      board
+  | _ -> failwith "Invalid direction. Must be 'left', 'right', 'up', or 'down'"
 
 let reverse board =
   let new_board = make_empty_board () in
@@ -84,10 +169,10 @@ let reverse board =
   done;
   new_board
 
-let move_left board = compress (merge (compress board))
-let move_up board = turn (move_left (turn board))
-let move_right board = reverse (move_left (reverse board))
-let move_down board = turn (move_right (turn board))
+let move_left board = compress (merge (compress board "left") "left") "left"
+let move_up board = compress (merge (compress board "up") "up") "up"
+let move_right board = compress (merge (compress board "right") "right") "right"
+let move_down board = compress (merge (compress board "down") "down") "down"
 
 let get_value board (i, j) =
   match board.(i).(j) with

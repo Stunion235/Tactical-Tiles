@@ -13,10 +13,10 @@ val add_new : grid -> grid
 val turn : grid -> grid
 (**Interchange the rows and columns of grid*)
 
-val merge : grid -> grid
+val merge : grid -> string -> grid
 (**Merge the cells in grid*)
 
-val compress : grid -> grid
+val compress : grid -> string -> grid
 (**Compress the grid*)
 
 val reverse : grid -> grid
