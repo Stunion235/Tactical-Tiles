@@ -31,6 +31,9 @@ val move_right : grid -> grid
 val move_left : grid -> grid
 (**Update the grid after a "left" move*)
 
+val has_legal_move : grid -> bool
+(*Whether or not the grid has legal moves left*)
+
 val curr_state : grid -> string
 (**Return the current state of the game. The state is either "WON", "GAME NOT
    OVER", or "LOST"*)

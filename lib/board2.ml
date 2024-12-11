@@ -19,14 +19,20 @@ type grid = tile array array
 
 let create_tile value = if value < 0 then Empty else Number value
 
+let get_value board (i, j) =
+  match board.(i).(j) with
+  | Empty -> -1
+  | Number x -> x
+
 let add_new board =
   let loc_row = ref (Random.int 4) in
   let loc_col = ref (Random.int 4) in
-  while board.(!loc_row).(!loc_col) <> Empty do
-    loc_row := Random.int 4;
-    loc_col := Random.int 4
-  done;
-  board.(!loc_row).(!loc_col) <- Number 2;
+  if Array.exists (fun r -> Array.exists (fun c -> c = Empty) r) board then (
+    while board.(!loc_row).(!loc_col) <> Empty do
+      loc_row := Random.int 4;
+      loc_col := Random.int 4
+    done;
+    board.(!loc_row).(!loc_col) <- Number 2);
   board
 
 let make_empty_board () =
@@ -191,37 +197,6 @@ let move_up board = compress (merge (compress board "up") "up") "up"
 let move_right board = compress (merge (compress board "right") "right") "right"
 let move_down board = compress (merge (compress board "down") "down") "down"
 
-let get_value board (i, j) =
-  match board.(i).(j) with
-  | Empty -> -1
-  | Number x -> x
-
-let curr_state board =
-  let won = ref false in
-  let empty = ref false in
-  for i = 0 to 3 do
-    for j = 0 to 3 do
-      if get_value board (i, j) = 2048 then won := true
-      else if get_value board (i, j) = -1 then empty := true
-    done
-  done;
-  if (not !empty) && not !won then
-    for i = 0 to 2 do
-      for j = 0 to 2 do
-        if
-          get_value board (i, j) = get_value board (i + 1, j)
-          || get_value board (i, j) = get_value board (i, j + 1)
-        then empty := true
-      done
-    done;
-  for i = 0 to 2 do
-    if get_value board (i, 3) = get_value board (i + 1, 3) then empty := true
-  done;
-  for j = 0 to 2 do
-    if get_value board (3, j) = get_value board (3, j + 1) then empty := true
-  done;
-  if !won then "WON" else if !empty then "GAME NOT OVER" else "LOST"
-
 let make_move board dir =
   match String.lowercase_ascii dir with
   | "w" -> board |> move_up |> add_new
@@ -232,6 +207,29 @@ let make_move board dir =
       print_endline "This is an invalid input. Type w, a, s, or d";
       board
 [@@coverage off]
+
+let has_legal_move b =
+  let dirs = [ "w"; "a"; "s"; "d" ] in
+  try
+    for d = 0 to 3 do
+      if make_move (Array.map Array.copy b) (List.nth dirs d) <> b then
+        failwith "yes"
+    done;
+    false
+  with Failure _ -> true
+
+let curr_state board =
+  let won = ref false in
+  let empty = ref false in
+  for i = 0 to 3 do
+    for j = 0 to 3 do
+      if get_value board (i, j) = 2048 then won := true
+      else if get_value board (i, j) = -1 then empty := true
+    done
+  done;
+  if !won then "WON"
+  else if !empty || has_legal_move board then "GAME NOT OVER"
+  else "LOST"
 
 let to_intarrayarray (g : grid) =
   Array.map

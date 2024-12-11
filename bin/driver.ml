@@ -216,15 +216,16 @@ let main mode =
 let main_2048 () =
   let board = Board2.make_board () in
   Ui.print_grid_2048 board;
-  while Board2.curr_state board = "GAME NOT OVER" do
+  let state = ref "GAME NOT OVER" in
+  while !state = "GAME NOT OVER" do
     let user_input = input_line stdin in
     let user_input = String.trim user_input in
     if not (List.mem user_input [ "w"; "a"; "s"; "d" ]) then
       print_endline "Invalid input! Please use w, a, s, or d."
-    else
-      let board = Board2.make_move board user_input in
-      Ui.print_grid_2048 board
+    else ignore (Board2.make_move board user_input);
+    state := Board2.curr_state board;
+    Ui.print_grid_2048 board;
+    print_endline !state
   done;
-  if Board2.curr_state board = "WON" then
-    print_endline "Congratulations you won!"
-  else if Board2.curr_state board = "LOST" then print_endline "You lost!"
+  if !state = "WON" then print_endline "Congratulations you won!"
+  else if !state = "LOST" then print_endline "You lost!"

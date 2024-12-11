@@ -72,8 +72,7 @@ let make_basic_undo_test name moves expected =
       ignore (Board.move_tile grid x))
     moves;
   let actual = Board.undo grid test_moves in
-  assert_equal expected actual ~msg:name ~printer:(fun x ->
-      if x then "true" else "false")
+  assert_equal expected actual ~msg:name ~printer:string_of_bool
 
 let basic_undo_tests =
   "Simple undo tests"
@@ -481,6 +480,22 @@ let merge_tests =
          make_merge_test "full row" (read_2048_test 16) (read_2048_test 17);
        ]
 
+let legal_move_test name input expected =
+  name >:: fun _ ->
+  let grid = Board2.of_intarrayarray input in
+  let actual = Board2.has_legal_move grid in
+  assert_equal expected actual ~msg:name ~printer:string_of_bool
+
+let legal_move_tests =
+  "legal moves"
+  >::: [
+         legal_move_test "empty" (read_2048_test 18) true;
+         legal_move_test "one tile" (read_2048_test 19) true;
+         legal_move_test "gaps" (read_2048_test 20) true;
+         legal_move_test "no gaps, possible merge" (read_2048_test 21) true;
+         legal_move_test "no moves" (read_2048_test 22) false;
+       ]
+
 let move_left_test name input expected =
   name >:: fun _ ->
   let grid = Board2.of_intarrayarray input in
@@ -561,7 +576,7 @@ let curr_state_tests =
          curr_state_test "grid with empty tiles and no 2048 tile"
            (read_2048_test 50) "GAME NOT OVER";
          curr_state_test "2048 tile with empty tiles" (read_2048_test 51) "WON";
-         curr_state_test "2048 tile and full grid" (read_2048_test 52) "WON";
+         curr_state_test "2048 tile and full grid" (read_2048_test 23) "WON";
        ]
 
 let all_board_tests =
@@ -579,6 +594,7 @@ let all_board2_tests =
          right_tests;
          down_tests;
          curr_state_tests;
+         legal_move_tests;
        ]
 
 let all_board_tests =
