@@ -1,3 +1,386 @@
+commit 487abf5428f789f48505f5ddce1888df79db2b50
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Wed Dec 11 23:05:50 2024 -0500
+
+    Fix print2048
+
+commit 62b72da74796a4617879fbc5000a42cebee8ee60
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Wed Dec 11 22:19:10 2024 -0500
+
+    Combo Mode instructions
+
+commit cb6d85b28e64fdbaddc7ecfb1c20edb4ba8dcfde
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Wed Dec 11 22:08:35 2024 -0500
+
+    Added in functionality to keep playing 2048 after winning sliding puzzle in driver
+
+commit 68e834b0800bac7ea64bfaf445490eaa9461cf15
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Wed Dec 11 21:50:41 2024 -0500
+
+    Added intros to game modes
+
+commit 213a3c0ce5dbd10df8e323b9121fbc055ccf5279
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Wed Dec 11 20:55:54 2024 -0500
+
+    2048 Combo
+
+commit a817839c510cc0db26d28739f3a84ba5289a606d
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Wed Dec 11 20:43:39 2024 -0500
+
+    Added 2048 mode
+
+commit 09fc3f44a489a9590d0deb4f4c720a245ca2f54e
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Tue Dec 10 22:11:47 2024 -0500
+
+    fix add_new infinite loop
+
+commit c52626552667dc80e6050a7ae8b00433cc0a9cb4
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Mon Dec 9 17:59:27 2024 -0500
+
+    Fix D
+    -test
+
+commit 441dbb6db6eb35df17602ec1bac74afad5034367
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Mon Dec 9 16:12:33 2024 -0500
+
+    Read test arrays from file
+
+commit c05d60567d80d0bb8164ffa72adf6476ea011ccd
+Author: Elli <emb427@cornell.edu>
+Date:   Mon Dec 9 15:19:24 2024 -0500
+
+    added ui + 2048 function changes
+
+commit 6af6127aa6407a99ec56498c6df1f337aa44c397
+Author: Elli <emb427@cornell.edu>
+Date:   Mon Dec 9 15:19:12 2024 -0500
+
+    added ui + 2048 function changes
+
+commit 15f3715c3cf41d1c0689c7c73e83738b6004d361
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sun Dec 8 14:44:49 2024 -0500
+
+    Edited make_move
+
+commit 9f310fb21b21da1b2b607d41d4ecb56f5f925aae
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sun Dec 8 14:39:55 2024 -0500
+
+    added make_move in board2
+
+commit b704a55a61896ec923465d4c7812e7e588d61cf3
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sun Dec 8 14:22:04 2024 -0500
+
+    Move UI to bin
+
+commit fac79247ee95166e5f9ee678ede280abb9a5b6d6
+Author: Elli <emb427@cornell.edu>
+Date:   Sun Dec 8 14:01:59 2024 -0500
+
+    started 2048 driver
+
+commit d1fec1e52373bd51e62ad2f5c3c97e8e80cc9ed7
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sun Dec 8 13:57:51 2024 -0500
+
+    Added AF and RI to ml files, added comments to board2.mli
+
+commit 60af856806d309a801ee79e55792f738b57ecc09
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sun Dec 8 13:28:26 2024 -0500
+
+    tostring tests
+
+commit 3651ffd4c03b15b79ef54a4cd4fb2a1e11732ca0
+Merge: 7a8748b 90f1e26
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sun Dec 8 12:57:32 2024 -0500
+
+    Merge branch 'main' of github.coecis.cornell.edu:at863/3110-final
+
+commit 7a8748b58f1237b7512039f2d5e15797460da267
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sun Dec 8 12:56:46 2024 -0500
+
+    implemented curr_state
+
+commit 90f1e268005084c6e9c5509e322caf47de2b32a4
+Merge: 223480f 9d6fe1b
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sun Dec 8 12:28:22 2024 -0500
+
+    Added reverse test case
+
+commit 223480f9548ae286afb108e6e12cbe61029c0e66
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sun Dec 8 12:16:49 2024 -0500
+
+    Added tests
+
+commit 9d6fe1bcb382e14f54b72c210ae50bc00af0b256
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Dec 7 16:10:34 2024 -0500
+
+    Parentheses fix
+    -README
+    -intarrayarray_to_string
+
+commit d66217428b74419a325d62991b6ce6a14d6593d0
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Dec 7 15:54:14 2024 -0500
+
+    Added more tests and move functions
+
+commit 21caf4606df8490eb0a553a89dbe08e866e73347
+Merge: 4799158 829a166
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Dec 7 15:10:04 2024 -0500
+
+    Initialized board2.ml and board2.mli, made some tests
+
+commit 479915801b91a0121917f70ba73ae3e0e5288c57
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Dec 7 15:02:14 2024 -0500
+
+    Initialized board2.ml and board2.mli, made some tests
+
+commit 829a1666c5d3066e7b31d1e344e45e7603900d3d
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Dec 7 14:44:54 2024 -0500
+
+    Undo
+    -Test
+    -Program args
+
+commit cfa419fecc593488418e3bf43f77fb057846695f
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Dec 7 14:41:34 2024 -0500
+
+    Undo
+    -Test
+    -Program args
+
+commit 12f6c37035b44cb472fef47e2fc8246500ec4d95
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Dec 7 04:07:33 2024 -0500
+
+    added a test case
+
+commit c387ccb8f199d1a73cf0e7a3adbda4b91c993244
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Fri Dec 6 23:20:17 2024 -0500
+
+    deleted unused function
+
+commit 94b2ba34bf70e8aeb197fa9081e687c0f743a6dd
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Fri Dec 6 23:17:42 2024 -0500
+
+    Added test cases
+
+commit 291957dc0492bb670e3473bd881c1853e5b028e0
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Tue Dec 3 00:37:43 2024 -0500
+
+    Help, helpers, and color
+
+commit 1768bdfef62a3d01fa68822ef22e826e7eaa1b5d
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Fri Nov 29 22:57:57 2024 -0500
+
+    Color mode
+
+commit 58d62373e502181587194574054fc6f757bfcb2c
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Mon Nov 25 13:17:32 2024 -0500
+
+    Added test cases for simulation
+
+commit 6234dbf62ea4bf0e3b8951579a2a8ade4627d66c
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sun Nov 24 15:24:14 2024 -0500
+
+    Added simulate command to help
+
+commit 904b671013670f21f72c9a2d812199692f9611c7
+Merge: 276267c ae83da9
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sun Nov 24 15:18:37 2024 -0500
+
+    Fixed simulate
+
+commit 276267c10a568d89c0710c64e2eb7c62370722f9
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sun Nov 24 15:07:43 2024 -0500
+
+    Fixed simulate
+
+commit ae83da967164f067da7fad0c2b742b102944e4f4
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sun Nov 24 12:07:32 2024 -0500
+
+    README and skip option
+
+commit bcf2b9bbbb8f58feba05dc92a53559382d790104
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sun Nov 24 11:58:33 2024 -0500
+
+    Add tests
+    -Fix format_time
+    -Bisect coverage
+
+commit 82ba2e556a070e8bafccd918311e6416d44a9eff
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sat Nov 23 13:08:39 2024 -0500
+
+    Fixed shuffle
+
+commit 1740e2cb0bcadd14110ba327a88fcdf8c732eb84
+Merge: 3100165 7bd512e
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sat Nov 23 12:29:49 2024 -0500
+
+    added simulation
+
+commit 310016569919c6af84da168699a3958c311ef73d
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sat Nov 23 12:22:07 2024 -0500
+
+    added simulation
+
+commit 7bd512ebb940389a9e192fcd605cdd4c098da4bf
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Nov 23 12:05:13 2024 -0500
+
+    Stopwatch+timer modes
+
+commit 480d036c660f0f4e72df40b7260bb56dab5e3887
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Nov 23 11:58:46 2024 -0500
+
+    Stopwatch+timer modes
+
+commit 6b5a5ade5db98dc1d0fc504584f787cfbed269c0
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Thu Nov 21 23:06:11 2024 -0500
+
+    Test for all numbers
+
+commit 98d8c60f601c9850dac6787c139256e4c400b978
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Thu Nov 21 22:53:21 2024 -0500
+
+    print help
+
+commit 2c5aeda094bc7d83e659a87df9278e171ee5385a
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Thu Nov 21 22:48:17 2024 -0500
+
+    implemented check_correct_board
+
+commit 424569f88adbca504d4d7912c5e6a01c5fa67104
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Thu Nov 21 22:04:58 2024 -0500
+
+    Added in a way to stop program in the middle
+
+commit 0777b4e6976a67a95212558be7b5ba8311162d2f
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Nov 16 15:30:05 2024 -0500
+
+    bugfix
+
+commit fa373ba119f21297f911e12d3a3646a7d5b61fad
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Nov 16 14:29:01 2024 -0500
+
+    fix shuffle, fix move, make gameloop
+
+commit 58d275ed264815e578942ed59d84c1798a61011f
+Author: Elli <emb427@cornell.edu>
+Date:   Sat Nov 16 13:36:41 2024 -0500
+
+    created swap function
+
+commit fffd7f2481e967aace543ad6e04e2de5a5572239
+Merge: f75e227 62bca39
+Author: Elli <emb427@cornell.edu>
+Date:   Sat Nov 16 13:36:07 2024 -0500
+
+    Merge branch 'main' of github.coecis.cornell.edu:at863/3110-final
+
+commit f75e22755016eacdc3078b9433e63d69f60187d8
+Author: Elli <emb427@cornell.edu>
+Date:   Sat Nov 16 13:35:13 2024 -0500
+
+    idek what changes I made
+
+commit 62bca393c7fe1f97ac0372c46ec5282309b32bbc
+Merge: ba1075e 88a0f22
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Nov 16 13:29:45 2024 -0500
+
+    Merge branch 'main' of github.coecis.cornell.edu:at863/3110-final
+
+commit ba1075e2e17f6e9cd13fed641ce2f2e813ceb638
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Nov 16 13:28:23 2024 -0500
+
+    made edits to row and column
+
+commit b9c4b7d4d7dc640c8aea1b6bba86727765f636ae
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Nov 16 13:15:53 2024 -0500
+
+    more descriptive comments
+
+commit 88a0f22ff854b5a3fc9bf6ce7b73e6a330269906
+Author: Anirudh Tenneti <at863@cornell.edu>
+Date:   Sat Nov 16 13:08:33 2024 -0500
+
+    add test
+
+commit 7bd22ea7ef3f379f3bc80fc985a6f4ad9beecd8f
+Author: Abhinaya Mukundan <sm2945@cornell.edu>
+Date:   Sat Nov 16 13:04:55 2024 -0500
+
+    added in move_tile grid direction function
+
+commit b5012fd797b3f718a6d83cf0603b92589cd6e0af
+Author: Elli <emb427@cornell.edu>
+Date:   Sat Nov 16 12:47:46 2024 -0500
+
+    made in_bound function
+
+commit 711e13d8d7ea9d08f4a6c5ab4392bea6277e249c
+Merge: 24ffc94 056d962
+Author: Elli <emb427@cornell.edu>
+Date:   Sat Nov 16 12:46:10 2024 -0500
+
+    Merge branch 'main' of github.coecis.cornell.edu:at863/3110-final
+
+commit 24ffc9435f1571a83184aab2954f078d2107b04b
+Author: Elli <emb427@cornell.edu>
+Date:   Sat Nov 16 12:42:52 2024 -0500
+
+    made in_bound function
+
+commit 056d96263b2b15627ea1230a331e8d7f639096c5
+Author: Lauren Mok <lm685@cornell.edu>
+Date:   Sat Nov 16 12:40:45 2024 -0500
+
+    Added move_tile
+
 commit a277af707cd2a0d86c86a83fbb31ce7c3cf260a5
 Author: Lauren Mok <lm685@cornell.edu>
 Date:   Wed Oct 30 22:03:10 2024 -0400
