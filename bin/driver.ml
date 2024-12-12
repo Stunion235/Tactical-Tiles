@@ -30,6 +30,22 @@ let format_time s =
   let secs = string_of_int (s mod 60) in
   if s mod 60 > 9 then mins ^ ":" ^ secs else mins ^ ":0" ^ secs
 
+(**Print one character of s at a time with d secs in between for a "typing"
+   effect, in ANSITermial style c.*)
+let print_type s ?(c = ANSITerminal.default) d =
+  if c = ANSITerminal.default then
+    for i = 0 to String.length s - 1 do
+      i |> String.get s |> print_char;
+      flush stdout;
+      Unix.sleepf d
+    done
+  else
+    for i = 0 to String.length s - 1 do
+      i |> String.get s |> String.make 1 |> ANSITerminal.print_string [ c ];
+      flush stdout;
+      Unix.sleepf d
+    done
+
 (*Print instructions with an extra explanation of the current gamemode*)
 let print_help mode =
   (*Pause for t secs only if not in a timed mode*)
@@ -40,29 +56,34 @@ let print_help mode =
       print_endline "Press enter to continue.";
       ignore (input_char stdin))
   in
-  print_endline "\n\n\nInstructions:";
+  print_endline "\n\n";
+  print_type "Instructions:" 0.03;
   sleepf_if_untimed 0.5;
   print_endline
-    "-To make moves, type w, a, s, or d corresponding to the direction in \
-     which to move a tile into the gap.";
+    "\n-To make moves, type w, a, s, or d corresponding to the direction in";
+  sleepf_if_untimed 0.2;
+  print_endline "which to move a tile into the gap.";
   sleepf_if_untimed 0.5;
   print_endline "-Press enter after each one.";
-  sleepf_if_untimed 0.5;
+  sleepf_if_untimed 0.2;
   print_endline
     "\t-Hint: think of this as moving the gap in the opposite direction.";
-  sleepf_if_untimed 0.5;
+  sleepf_if_untimed 0.4;
   print_endline
-    "-Your goal is to get the board in a configuration where numbers increase \
-     from left to right across rows, with the empty tile in the bottom right \
-     corner, like this:";
+    "-Your goal is to get the board in a configuration where numbers increase";
+  sleepf_if_untimed 0.2;
+  print_endline "from left to right across rows, with the empty tile in the";
+  sleepf_if_untimed 0.2;
+  print_endline "bottom right corner, like this:";
+  sleepf_if_untimed 0.5;
   let solve3 = Board.initialize_board 3 in
   Board.fill_board solve3;
   Ui.print_grid solve3;
   enter_if_untimed ();
   print_endline "-To see this help later, type 'help'.";
-  sleepf_if_untimed 0.5;
+  sleepf_if_untimed 0.3;
   print_endline "-To see a simulation of the solution, type 'simulate'.";
-  sleepf_if_untimed 0.5;
+  sleepf_if_untimed 0.3;
   print_endline "-To quit, type 'stop'.\n";
   sleepf_if_untimed 1.;
   enter_if_untimed ();
@@ -85,26 +106,53 @@ let print_help mode =
       ignore (input_char stdin)
   | 4 ->
       print_string "Color Mode:\n-The colors ";
-      ANSITerminal.(print_string [ red ] "red");
+      print_type "red" 0.05 ~c:ANSITerminal.red;
       print_string ", ";
-      ANSITerminal.(print_string [ yellow ] "yellow");
+      print_type "yellow" 0.05 ~c:ANSITerminal.yellow;
       print_string ", ";
-      ANSITerminal.(print_string [ green ] "green");
+      print_type "green" 0.05 ~c:ANSITerminal.green;
       print_string ", ";
-      ANSITerminal.(print_string [ cyan ] "cyan");
+      print_type "cyan" 0.05 ~c:ANSITerminal.cyan;
       print_string ", ";
-      ANSITerminal.(print_string [ blue ] "blue");
+      print_type "blue" 0.05 ~c:ANSITerminal.blue;
       print_string ", ";
-      ANSITerminal.(print_string [ magenta ] "magenta");
+      print_type "magenta" 0.05 ~c:ANSITerminal.magenta;
+      print_endline ", and ";
+      print_type "white" 0.05;
+      print_endline " appear to make the solution easier to find.";
+      Unix.sleepf 0.2;
       print_endline
-        ", and white appear to make the solution easier to find.\n\
-         -In that order, the colors go from top left to bottom right in the \
-         solution.\n\
-         -Press enter for an example:";
+        "-In that order, the colors go from top left to bottom right in the \
+         solution.";
+      Unix.sleepf 0.1;
+      print_endline "-Press enter for an example:";
       ignore (input_char stdin);
       let solve8 = Board.initialize_board 8 in
       Board.fill_board solve8;
       Ui.print_grid_styled solve8;
+      print_endline "Press enter to continue.";
+      ignore (input_char stdin)
+  | 5 ->
+      print_string "2048 Combo Mode:\n-The ";
+      flush stdout;
+      print_type "ultimate multitasking challenge!" 0.05 ~c:ANSITerminal.red;
+      print_newline ();
+      Unix.sleep 1;
+      print_endline "Can you master both boards at once?";
+      Unix.sleepf 0.7;
+      print_endline "-Standard 4x4 slider on the left.";
+      Unix.sleepf 0.1;
+      print_endline "-2048 grid on the right.";
+      Unix.sleepf 0.5;
+      print_endline "-Making a move moves the tiles on both grids.";
+      Unix.sleepf 0.4;
+      print_endline "-You can only make a move if it is valid on both grids.";
+      Unix.sleepf 0.5;
+      print_endline
+        "-If 2048 runs out of moves before you solve the slider, you lose!";
+      Unix.sleepf 0.5;
+      print_endline "\t-Simulate and Undo are not allowed.";
+      Unix.sleepf 0.5;
       print_endline "Press enter to continue.";
       ignore (input_char stdin)
   | _ -> ()
@@ -221,7 +269,10 @@ let main_2048 board =
     let user_input = input_line stdin in
     let user_input = String.trim user_input in
     if not (List.mem user_input [ "w"; "a"; "s"; "d" ]) then
-      print_endline "Invalid input! Please use w, a, s, or d."
+      if String.uppercase_ascii user_input = "STOP" then (
+        print_string "Quitting.";
+        exit 0)
+      else print_endline "Invalid input! Please use w, a, s, or d."
     else ignore (Board2.make_move board user_input);
     state := Board2.curr_state board;
     Ui.print_grid_2048 board;

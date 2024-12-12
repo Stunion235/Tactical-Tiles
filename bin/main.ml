@@ -11,7 +11,10 @@ let rec ask_mode () =
 
   ANSITerminal.(print_string [ green ] "Color ");
   ANSITerminal.(print_string [ magenta ] "Mode");
-  print_endline "(add color to make aligning tiles easier)\n5. 2048 Combo";
+  print_endline
+    " (add color to make aligning tiles easier)\n\
+     5. 2048 Combo (4x4 slider with a game of 2048 playing simultaneously for \
+     an extra challenge.)";
   try
     let x = int_of_string (input_line stdin) in
     if x > 0 && x < 6 then x else ask_mode ()
@@ -22,23 +25,26 @@ let () =
     print_endline "Intro skipped."
   else (
     print_endline "\n";
-    print_string "Welcome to the ";
+    Driver.print_type "Welcome to the " 0.06;
     ANSITerminal.(print_string [ cyan ] "H");
-    print_string "umpback ";
+    Driver.print_type "umpback " 0.1;
     ANSITerminal.(print_string [ red ] "H");
-    print_string "ackers' ";
+    Driver.print_type "ackers' " 0.1;
     ANSITerminal.(print_string [ cyan ] "T");
-    print_string "actical ";
+    Driver.print_type "actical " 0.1;
     ANSITerminal.(print_string [ red ] "T");
-    print_string "iles!\n";
+    Driver.print_type "iles!" 0.1;
+    print_newline ();
     let colors = ANSITerminal.[ red; yellow; green; cyan; blue; magenta ] in
     for _ = 1 to 8 do
       for c = 0 to 5 do
-        ANSITerminal.print_string [ List.nth colors c ] "_"
+        ANSITerminal.print_string [ List.nth colors c ] "_";
+        flush stdout;
+        Unix.sleepf 0.01
       done
     done;
     print_newline ();
-    Unix.sleepf 1.5;
+    Unix.sleepf 0.4;
     print_endline "Press enter to continue.";
     ignore (input_char stdin));
   let mode = ref 0 in
@@ -69,7 +75,9 @@ let () =
     let colors = ANSITerminal.[ red; yellow; green; cyan; blue; magenta ] in
     for _ = 1 to 5 do
       for c = 0 to 5 do
-        ANSITerminal.print_string [ List.nth colors c ] "_"
+        ANSITerminal.print_string [ List.nth colors c ] "_";
+        flush stdout;
+        Unix.sleepf 0.01
       done
     done;
     print_endline "\n";
