@@ -213,6 +213,23 @@ let main mode =
         unsolved := false)
   done
 
+let main_2048 board =
+  let board = board in
+  Ui.print_grid_2048 board;
+  let state = ref "GAME NOT OVER" in
+  while !state = "GAME NOT OVER" do
+    let user_input = input_line stdin in
+    let user_input = String.trim user_input in
+    if not (List.mem user_input [ "w"; "a"; "s"; "d" ]) then
+      print_endline "Invalid input! Please use w, a, s, or d."
+    else ignore (Board2.make_move board user_input);
+    state := Board2.curr_state board;
+    Ui.print_grid_2048 board;
+    print_endline !state
+  done;
+  if !state = "WON" then print_endline "Congratulations you won!"
+  else if !state = "LOST" then print_endline "You lost!"
+
 let main_multitask () =
   let num_moves = ref 0 in
   Random.self_init ();
@@ -255,22 +272,17 @@ let main_multitask () =
     if Board.check_correct_board board then (
       print_endline "Success!";
       print_endline ("You took " ^ string_of_int !num_moves ^ " moves!");
-      unsolved := false)
+      let rec ask_2048 () =
+        print_endline "Would you like to keep playing 2048? Yes or No.";
+        try
+          let x = String.capitalize_ascii (input_line stdin) in
+          match x with
+          | "Yes" -> main_2048 board2
+          | "No" ->
+              print_endline "Thanks for playing!";
+              exit 0
+          | _ -> ask_2048 ()
+        with Failure _ -> ask_2048 ()
+      in
+      ask_2048 ())
   done
-
-let main_2048 () =
-  let board = Board2.make_board () in
-  Ui.print_grid_2048 board;
-  let state = ref "GAME NOT OVER" in
-  while !state = "GAME NOT OVER" do
-    let user_input = input_line stdin in
-    let user_input = String.trim user_input in
-    if not (List.mem user_input [ "w"; "a"; "s"; "d" ]) then
-      print_endline "Invalid input! Please use w, a, s, or d."
-    else ignore (Board2.make_move board user_input);
-    state := Board2.curr_state board;
-    Ui.print_grid_2048 board;
-    print_endline !state
-  done;
-  if !state = "WON" then print_endline "Congratulations you won!"
-  else if !state = "LOST" then print_endline "You lost!"
