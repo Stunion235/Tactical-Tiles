@@ -208,12 +208,13 @@ let make_move board dir =
       board
 [@@coverage off]
 
+let is_move_legal b m = make_move (Array.map Array.copy b) m <> b
+
 let has_legal_move b =
   let dirs = [ "w"; "a"; "s"; "d" ] in
   try
     for d = 0 to 3 do
-      if make_move (Array.map Array.copy b) (List.nth dirs d) <> b then
-        failwith "yes"
+      if is_move_legal b (List.nth dirs d) then failwith "yes"
     done;
     false
   with Failure _ -> true

@@ -47,7 +47,7 @@ let () =
    with
   | None -> mode := ask_mode ()
   | Some m -> (
-      let arg = String.sub m 5 (String.length m - 5) in
+      let arg = String.sub m 4 (String.length m - 4) in
       try
         mode := int_of_string arg;
         if !mode > 0 && !mode < 6 then

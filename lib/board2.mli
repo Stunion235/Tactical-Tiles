@@ -31,6 +31,9 @@ val move_right : grid -> grid
 val move_left : grid -> grid
 (**Update the grid after a "left" move*)
 
+val is_move_legal : grid -> string -> bool
+(**Is the given move legal on the grid?*)
+
 val has_legal_move : grid -> bool
 (*Whether or not the grid has legal moves left*)
 

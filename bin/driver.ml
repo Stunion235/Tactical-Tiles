@@ -213,6 +213,51 @@ let main mode =
         unsolved := false)
   done
 
+let main_multitask () =
+  let num_moves = ref 0 in
+  Random.self_init ();
+  let board = Board.initialize_board 4 in
+  let board2 = Board2.make_board () in
+  Board.fill_board board;
+  let diff = ref "" in
+  (match
+     Array.find_opt (fun x -> List.mem x [ "easy"; "medium"; "hard" ]) Sys.argv
+   with
+  | None -> diff := ask_difficulty ()
+  | Some d ->
+      diff := d;
+      print_endline ("Automatically chose " ^ d ^ " difficulty."));
+  ignore (Board.shuffle board !diff);
+  if not (Array.exists (fun x -> x = "skip") Sys.argv) then (
+    print_endline "\n\n\n";
+    print_help 5);
+  let unsolved = ref true in
+  Ui.print_grids board board2;
+  while !unsolved do
+    let m = input_line stdin in
+    if String.uppercase_ascii m = "STOP" then (
+      print_string "Quitting.";
+      exit 0)
+    else if List.mem (String.uppercase_ascii m) [ "SIMULATE"; "UNDO" ] then
+      print_endline "This feature is not allowed in this mode!"
+    else if String.uppercase_ascii m = "HELP" then (
+      print_help 5;
+      Ui.print_grids board board2)
+    else if Board2.is_move_legal board2 m then (
+      if Board.move_tile board m then ignore (Board2.make_move board2 m))
+    else print_endline "Cannot make that move because it is invalid on 2048!";
+    if List.mem (String.lowercase_ascii m) [ "w"; "a"; "s"; "d" ] then
+      incr num_moves;
+    Ui.print_grids board board2;
+    if Board2.curr_state board2 = "LOST" then (
+      print_endline "Game over! The 2048 has no moves!";
+      exit 0);
+    if Board.check_correct_board board then (
+      print_endline "Success!";
+      print_endline ("You took " ^ string_of_int !num_moves ^ " moves!");
+      unsolved := false)
+  done
+
 let main_2048 () =
   let board = Board2.make_board () in
   Ui.print_grid_2048 board;
