@@ -1,4 +1,5 @@
 open Final
+
 (**For best results, g has at least one row and one column and is rectangular
    (all rows have the same number of columns)*)
 let grid_to_string g =
@@ -43,7 +44,7 @@ let grid_to_string_2048 (g : Board2.grid) =
   let acc = ref "" in
   acc := !acc ^ "*";
   for c = 0 to w - 1 do
-    acc := !acc ^ "---*"
+    acc := !acc ^ "----*"
   done;
   acc := !acc ^ "\n";
   for r = 0 to h - 1 do
@@ -51,21 +52,21 @@ let grid_to_string_2048 (g : Board2.grid) =
     for c = 0 to Array.length ints.(r) - 1 do
       let s = string_of_int ints.(r).(c) in
       acc :=
-        if ints.(r).(c) < 0 then !acc ^ "   |"
+        if ints.(r).(c) < 0 then !acc ^ "    |"
         else
           !acc
           ^ (match String.length s with
             | 0 -> ("impossible" [@coverage off])
-            | 1 -> " " ^ s ^ " "
-            | 2 -> " " ^ s
-            | 3 -> s
-            | _ -> String.sub s 0 3)
+            | 1 -> "  " ^ s ^ " "
+            | 2 -> " " ^ s ^ " "
+            | 3 -> " " ^ s
+            | _ -> String.sub s 0 4)
           ^ "|"
     done;
     acc := !acc ^ "\n";
     acc := !acc ^ "*";
     for c = 0 to w - 1 do
-      acc := !acc ^ "---*"
+      acc := !acc ^ "----*"
     done;
     acc := !acc ^ "\n"
   done;
@@ -79,11 +80,11 @@ let grids_to_string g j =
   let acc = ref "" in
   acc := !acc ^ "*";
   for c = 1 to w do
-    acc := !acc ^ "---*"
+    acc := !acc ^ "----*"
   done;
   acc := !acc ^ "\t\t*";
   for c = 1 to w do
-    acc := !acc ^ "---*"
+    acc := !acc ^ "----*"
   done;
   acc := !acc ^ "\n";
   for r = 0 to h - 1 do
@@ -91,40 +92,40 @@ let grids_to_string g j =
     for c = 0 to Array.length ints.(r) - 1 do
       let s = string_of_int ints.(r).(c) in
       acc :=
-        if ints.(r).(c) < 0 then !acc ^ "   |"
+        if ints.(r).(c) < 0 then !acc ^ "    |"
         else
           !acc
           ^ (match String.length s with
             | 0 -> ("impossible" [@coverage off])
-            | 1 -> " " ^ s ^ " "
-            | 2 -> " " ^ s
-            | 3 -> s
-            | _ -> String.sub s 0 3)
+            | 1 -> "  " ^ s ^ " "
+            | 2 -> " " ^ s ^ " "
+            | 3 -> " " ^ s
+            | _ -> String.sub s 0 4)
           ^ "|"
     done;
     acc := !acc ^ "\t\t|";
     for c = 0 to Array.length ints2.(r) - 1 do
       let s = string_of_int ints2.(r).(c) in
       acc :=
-        if ints2.(r).(c) < 0 then !acc ^ "   |"
+        if ints2.(r).(c) < 0 then !acc ^ "    |"
         else
           !acc
           ^ (match String.length s with
             | 0 -> ("impossible" [@coverage off])
-            | 1 -> " " ^ s ^ " "
-            | 2 -> " " ^ s
-            | 3 -> s
-            | _ -> String.sub s 0 3)
+            | 1 -> "  " ^ s ^ " "
+            | 2 -> " " ^ s ^ " "
+            | 3 -> " " ^ s
+            | _ -> String.sub s 0 4)
           ^ "|"
     done;
     acc := !acc ^ "\n";
     acc := !acc ^ "*";
     for c = 0 to w - 1 do
-      acc := !acc ^ "---*"
+      acc := !acc ^ "----*"
     done;
     acc := !acc ^ "\t\t*";
     for c = 0 to w - 1 do
-      acc := !acc ^ "---*"
+      acc := !acc ^ "----*"
     done;
     acc := !acc ^ "\n"
   done;

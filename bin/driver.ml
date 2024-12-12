@@ -157,6 +157,7 @@ let print_help mode =
       ignore (input_char stdin)
   | _ -> ()
 
+(*Main loop for all modes except Combo*)
 let main mode =
   let num_moves = ref 0 in
   Random.self_init ();
@@ -261,6 +262,7 @@ let main mode =
         unsolved := false)
   done
 
+(*Main loop if user plays 2048 after Combo*)
 let main_2048 board =
   let board = board in
   Ui.print_grid_2048 board;
@@ -275,12 +277,12 @@ let main_2048 board =
       else print_endline "Invalid input! Please use w, a, s, or d."
     else ignore (Board2.make_move board user_input);
     state := Board2.curr_state board;
-    Ui.print_grid_2048 board;
-    print_endline !state
+    Ui.print_grid_2048 board
   done;
   if !state = "WON" then print_endline "Congratulations you won!"
   else if !state = "LOST" then print_endline "You lost!"
 
+(*Combo Mode*)
 let main_multitask () =
   let num_moves = ref 0 in
   Random.self_init ();

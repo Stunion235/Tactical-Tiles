@@ -20,9 +20,21 @@ let rec ask_mode () =
     if x > 0 && x < 6 then x else ask_mode ()
   with Failure _ -> ask_mode ()
 
+(*print decorative line*)
+let print_rainbows n delay =
+  let colors = ANSITerminal.[ red; yellow; green; cyan; blue; magenta ] in
+  for _ = 1 to n do
+    for c = 0 to 5 do
+      ANSITerminal.print_string [ List.nth colors c ] "_";
+      if delay then (
+        flush stdout;
+        Unix.sleepf 0.01)
+    done
+  done
+
 let () =
-  if Array.exists (fun x -> x = "skip") Sys.argv then
-    print_endline "Intro skipped."
+  let skip = Array.exists (fun x -> x = "skip") Sys.argv in
+  if skip then print_endline "Intro skipped."
   else (
     print_endline "\n";
     Driver.print_type "Welcome to the " 0.06;
@@ -35,14 +47,7 @@ let () =
     ANSITerminal.(print_string [ red ] "T");
     Driver.print_type "iles!" 0.1;
     print_newline ();
-    let colors = ANSITerminal.[ red; yellow; green; cyan; blue; magenta ] in
-    for _ = 1 to 8 do
-      for c = 0 to 5 do
-        ANSITerminal.print_string [ List.nth colors c ] "_";
-        flush stdout;
-        Unix.sleepf 0.01
-      done
-    done;
+    print_rainbows 8 true;
     print_newline ();
     Unix.sleepf 0.4;
     print_endline "Press enter to continue.";
@@ -72,14 +77,7 @@ let () =
     ANSITerminal.(print_string [ yellow ] "B");
     ANSITerminal.(print_string [ red ] "O");
     print_string " Mode!\n";
-    let colors = ANSITerminal.[ red; yellow; green; cyan; blue; magenta ] in
-    for _ = 1 to 5 do
-      for c = 0 to 5 do
-        ANSITerminal.print_string [ List.nth colors c ] "_";
-        flush stdout;
-        Unix.sleepf 0.01
-      done
-    done;
+    print_rainbows 5 (not skip);
     print_endline "\n";
     Driver.main_multitask ())
   else if !mode = 1 then (
@@ -92,12 +90,7 @@ let () =
     ANSITerminal.(print_string [ red ] "A");
     ANSITerminal.(print_string [ cyan ] "L");
     print_string " Mode!\n";
-    let colors = ANSITerminal.[ red; yellow; green; cyan; blue; magenta ] in
-    for _ = 1 to 4 do
-      for c = 0 to 5 do
-        ANSITerminal.print_string [ List.nth colors c ] "_"
-      done
-    done;
+    print_rainbows 5 (not skip);
     print_endline "\n";
     Driver.main !mode)
   else if !mode = 2 then (
@@ -106,12 +99,7 @@ let () =
     ANSITerminal.(print_string [ cyan ] "TIME ");
     ANSITerminal.(print_string [ magenta ] "TRIAL");
     print_string " Mode! ⏱️\n";
-    let colors = ANSITerminal.[ red; yellow; green; cyan; blue; magenta ] in
-    for _ = 1 to 5 do
-      for c = 0 to 5 do
-        ANSITerminal.print_string [ List.nth colors c ] "_"
-      done
-    done;
+    print_rainbows 5 (not skip);
     print_endline "\n";
     Driver.main !mode)
   else if !mode = 3 then (
@@ -121,12 +109,7 @@ let () =
     ANSITerminal.(print_string [ magenta ] " the ");
     ANSITerminal.(print_string [ blue ] "CLOCK");
     print_string " Mode! 🏃 ⏰ \n";
-    let colors = ANSITerminal.[ red; yellow; green; cyan; blue; magenta ] in
-    for _ = 1 to 6 do
-      for c = 0 to 5 do
-        ANSITerminal.print_string [ List.nth colors c ] "_"
-      done
-    done;
+    print_rainbows 5 (not skip);
     print_endline "\n";
     Driver.main !mode)
   else if !mode = 4 then (
@@ -138,11 +121,6 @@ let () =
     ANSITerminal.(print_string [ blue ] "O");
     ANSITerminal.(print_string [ cyan ] "R");
     print_string " Mode! 🌈\n";
-    let colors = ANSITerminal.[ red; yellow; green; cyan; blue; magenta ] in
-    for _ = 1 to 5 do
-      for c = 0 to 5 do
-        ANSITerminal.print_string [ List.nth colors c ] "_"
-      done
-    done;
+    print_rainbows 5 (not skip);
     print_endline "\n";
     Driver.main !mode)
